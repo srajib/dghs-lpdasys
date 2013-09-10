@@ -320,14 +320,16 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 												
                                                     <tbody>
 													<?php
-													$pdainfo=mysql_query("SELECT * FROM lpda_pda where pda_org_code=$org_code");
+													
+													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
+FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_org_code");
 													$i=1;
 												    while($pdainfos = mysql_fetch_array($pdainfo))
 														{  ?>
                                                      <tr>
                                                        
                                                         <td><?php echo $pdainfos['id'];?></td>
-                                                        <td><?php echo $pdainfos['pda_union_name'];?></td>
+                                                        <td><?php echo $pdainfos['union_name'];?></td>
                                                         <td><?php echo $pdainfos['pda_ward_no'];?></td>
 														<td><?php echo $pdainfos['pda_person_type'];?></td>
 														<td><?php echo $pdainfos['pda_person_name'];?></td>
