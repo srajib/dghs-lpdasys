@@ -188,8 +188,15 @@ $email=$_SESSION['username'];?></span>
                                 <div class="row-fluid">
 
                                     <div class="span12">
-
+									<section class="utopia-widget">
+                                            <div class="utopia-widget-title">
+                                        <h2> &nbsp;Welcome to Laptop/PDA Distributon System</h2>
+										</div>
+										</section>
+										<!--
                                         <section class="utopia-widget">
+										
+										
                                             <div class="utopia-widget-title">
                                                 <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
                                                 <span>Dashboard</span>
@@ -229,7 +236,7 @@ $email=$_SESSION['username'];?></span>
 							  
 							  </table>
                                          
-                                        </section>
+                                        </section>-->
 
                                     </div>
 

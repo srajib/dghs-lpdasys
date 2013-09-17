@@ -184,7 +184,7 @@ $org_name=$rows['org_name'];
                                         <section class="utopia-widget">
                                             <div class="utopia-widget-title">
                                                 <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
-                                                <span>PDA Collection List</span>
+                                                <span>Name of HA/HI/AHI & Tablet/PDA Informtion &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="pdarequisition.php">Requisition Form</a></span>
                                             </div>
 
                                             <div class="utopia-widget-content">
@@ -200,9 +200,14 @@ $org_name=$rows['org_name'];
                                                     </colgroup>
 
                                                     <thead>
+													<tr>
+													<th colspan="11">
+													List of person with received PDA
+													</th>
+													</tr>
                                                     <tr>
                                                         <th>Sl</th>
-                                                        <th>Union</th>
+                                                        <th>Union BBS Code</th>
                                                         <th>Ward no</th>
 														<th>Person Type</th>
 														<th>Name of the person</th>
@@ -214,11 +219,14 @@ $org_name=$rows['org_name'];
 												
                                                     <tbody>
 													<?php
+													
 													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_org_code");
+FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
 													$i=1;
 												    while($pdainfos = mysql_fetch_array($pdainfo))
-														{  ?>
+														{  
+														if(!empty($pdainfos['pda_imei_no'])&&!empty($pdainfos['pda_sim_no'])){
+												        ?>
                                                      <tr>
                                                        
                                                         <td><?php echo $pdainfos['id'];?></td>
@@ -231,7 +239,61 @@ FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_un
 														<td><?php echo $pdainfos['pda_sim_no'];?></td>
                                                     </tr>
 
-                                                   <?php } ?>
+                                                   <?php }} ?>
+                                                    </tbody>
+                                                </table>
+												
+												   <table class="table table-bordered">
+
+                                                    <colgroup>
+                                                        <col class="utopia-col-0">
+                                                        <col class="utopia-col-1">
+                                                        <col class="utopia-col-0">
+                                                        <col class="utopia-col-1">
+                                                        <col class="utopia-col-0">
+                                                    </colgroup>
+
+                                                    <thead>
+													<tr>
+													<th colspan="11">
+													List of person without PDA
+													</th>
+													</tr>
+                                                    <tr>
+                                                        <th>Sl</th>
+                                                        <th>Union BBS Code</th>
+                                                        <th>Ward no</th>
+														<th>Person Type</th>
+														<th>Name of the person</th>
+														<th>Mobile No.</th>
+														<th>IMEI No.(PDA)</th>
+														<th>SIM No.</th>
+                                                    </tr>
+                                                    </thead>
+												
+                                                    <tbody>
+													<?php
+													
+													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
+FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
+													$i=1;
+												    while($pdainfos = mysql_fetch_array($pdainfo))
+														{  
+														if(empty($pdainfos['pda_imei_no'])||empty($pdainfos['pda_sim_no'])){
+												        ?>
+                                                     <tr>
+                                                       
+                                                        <td><?php echo $pdainfos['id'];?></td>
+                                                        <td><?php echo $pdainfos['union_name'];?></td>
+                                                        <td><?php echo $pdainfos['pda_ward_no'];?></td>
+														<td><?php echo $pdainfos['pda_person_type'];?></td>
+														<td><?php echo $pdainfos['pda_person_name'];?></td>
+														<td><?php echo $pdainfos['pda_person_mobile_no'];?></td>
+														<td><?php echo $pdainfos['pda_imei_no'];?></td>
+														<td><?php echo $pdainfos['pda_sim_no'];?></td>
+                                                    </tr>
+
+                                                   <?php }} ?>
                                                     </tbody>
                                                 </table>
 

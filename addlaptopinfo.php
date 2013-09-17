@@ -46,6 +46,18 @@ $org_name=$rows['org_name'];
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.cookie.js"></script>
+		<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
+	
+	<script src="js/languages/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8">
+	</script>
+	<script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8">
+	</script>
+	<script>
+		jQuery(document).ready( function() {
+			// binds form submission and fields to the validation engine
+			jQuery("#form3").validationEngine();
+		});
+	</script>
     <script type="text/javascript">
         if($.cookie("css")) {
             $('link[href*="utopia-white.css"]').attr("href",$.cookie("css"));
@@ -64,22 +76,8 @@ $org_name=$rows['org_name'];
         });
     </script>
 
-    <!--[if IE 8]>
-    <link href="css/ie8.css" rel="stylesheet">
-    <![endif]-->
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
 
-    <!--[if gte IE 9]>
-      <style type="text/css">
-        .gradient {
-           filter: none;
-        }
-      </style>
-    <![endif]-->
 
 </head>
 
@@ -173,8 +171,18 @@ $email=$_SESSION['username'];?></span>
 
         <!-- Body start -->
             <div class="span10 body-container">
-            
-
+        <!--    
+<div class="container">
+	<h4>There are serious errors in your form submission, please see below for details.</h4>
+	<ol>
+		<li><label for="laptop_org_code" class="error">Please select your Organization Code</label></li>
+		<li><label for="laptop_cc_name" class="error">Please select your Organization Name</label></li>
+		<li><label for="claptop_chcp_mobile_no" class="error">Please enter CHCP contact <b>number</b> (between 2 and 8 characters)</label></li>
+		<li><label for="address" class="error">Please enter your address (at least 3 characters)</label></li>
+		<li><label for="avatar" class="error">Please select an image (png, jpg, jpeg, gif)</label></li>
+		<li><label for="cv" class="error">Please select a document (doc, docx, txt, pdf)</label></li>
+	</ol>
+</div>-->
 
 
                 <div class="row-fluid">
@@ -186,14 +194,14 @@ $email=$_SESSION['username'];?></span>
                             <div class="span9">
                                 <div class="row-fluid">
                                         <section class="utopia-widget">
-										<form name="" method="post" action="addlaptopinfo.php">
+										<form name="" method="post" action="addlaptopinfo.php" class="formular" id="form3">
 										<table class="table">
 										<tr>
 										<td>
                                         Org Code 
 										</td>
 										<td colspan="2">
-										<select name="laptop_org_code" id="laptop_org_code">
+										<select name="laptop_org_code" id="laptop_org_code" class="validate[required,ajax[ajaxUserCallPhp]]">
 										   <?php
                          $upazila_row = mysql_query("SELECT lpda_organization.org_code,lpda_organization.organization_id,lpda_organization.org_name
 FROM lpda_organization WHERE lpda_organization.org_type_code='1039' AND upazila_id='".$upazila_id."' ORDER BY lpda_organization.org_code ASC ");
@@ -201,9 +209,7 @@ FROM lpda_organization WHERE lpda_organization.org_type_code='1039' AND upazila_
    while ($rows = mysql_fetch_assoc($upazila_row)) {
 	    echo "<option value=\"" . $rows['org_code'] . "\">" . $rows['org_code'] .' : '.$rows['org_name']. "</option>";
                                             
-	   }
-
-                                                    ?>
+	   }    ?>
 										</select>			
 										</td>
 										</tr>
@@ -212,8 +218,8 @@ FROM lpda_organization WHERE lpda_organization.org_type_code='1039' AND upazila_
 										Name of CC : 
 										</td>
 										<td colspan="2">
-										 <select id="laptop_cc_name" name="laptop_cc_name">
-                                            <option value="0">Select CC Name</option>                                        
+										 <select id="laptop_cc_name" name="laptop_cc_name" class="validate[required]">
+                                            <option value="">Select CC Name</option>                                        
                                          </select>
 										 <a href="addcc.php">If you want to add CC, please click here. </a>
 										</td>
@@ -223,8 +229,8 @@ FROM lpda_organization WHERE lpda_organization.org_type_code='1039' AND upazila_
 										Union Name : 
 										</td>
 										<td colspan="2">
-										<select name="laptop_union_name">
-										 <?php echo $upazila_id;
+										<select name="laptop_union_name" class="validate[required]">
+										 <?php  $upazila_id;
                          $union_row = mysql_query("SELECT lpda_union.union_name,lpda_union.old_upazila_id,lpda_union.old_union_id,lpda_union.union_bbs_code
 FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_union.union_name");
 
@@ -243,7 +249,7 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 										Ward No (New) : 
 										</td>
 										<td>
-											<select name="laptop_ward_no">
+											<select name="laptop_ward_no" class="validate[required]">
 											<option value="Ward No-1">Ward No-1</option>
 											<option value="Ward No-2">Ward No-2</option>
 											<option value="Ward No-3">Ward No-3</option>
@@ -264,7 +270,7 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 										CHCP Name : 
 										</td>
 										<td>
-										<input name="laptop_chcp_name" type="text">
+										<input name="laptop_chcp_name" type="text" class="validate[required]">
 										</td>
 										<td>
 										IMEI No : <input name="laptop_imei_no" type="text">
@@ -272,10 +278,10 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 										</tr>
 										<tr>
 										<td>
-										CHCP Mobile no : 
+										<label for="laptop_chcp_mobile_no">CHCP Mobile no : </label>
 										</td>
 										<td>
-										<span style="padding-top:2px;">+88</span><input name="laptop_chcp_mobile_no" type="text">
+										<span style="padding-top:2px;">+88</span><input name="laptop_chcp_mobile_no" id="laptop_chcp_mobile_no" class="validate[required,custom[phone]]">
 									    </td>
 										<td>
 										SIM No : <input name="laptop_sim_no" type="text">
@@ -287,8 +293,8 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 										</td>
 										<td>
 										
-										<select name="laptop_electricity_source_value" id="laptop_electricity_source_value">
-                                                    <option value="0">Select electricity source</option>
+										<select name="laptop_electricity_source_value" id="laptop_electricity_source_value" class="validate[required]">
+                                                    <option value="">Select electricity source</option>
                                                     <?php
                                                     $sql = "SELECT
                                                             lpda_source_of_electricity.electricity_source_code,
@@ -333,11 +339,74 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 										
 										</form>
                                         </section>
+										
+										  <div class="span12">
 
+                                        <section class="utopia-widget">
+                                         <div class="utopia-widget-title">
+                                                <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
+                                                <span>Name of CHCP & Laptop Information</span>
+                                            </div>
                                    
 <table class="table table-bordered">
 
                                                     <thead>
+													<tr>
+													<th colspan="11">
+													List of CHCP with received Laptop
+													</th>
+													</tr>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th nowrap="nowrap">Org code</th>
+														<th nowrap="nowrap">Name of CC</th>
+														<th nowrap="nowrap">Union</th>
+                                                        <th nowrap="nowrap">New Ward no</th>
+														<th nowrap="nowrap">CHCP Name</th>
+														<th nowrap="nowrap">CHCP Mobile No.</th>
+														<th>IMEI No.</th>
+														<th nowrap="nowrap">SIM No.</th>
+														<th nowrap="nowrap">Laptop Sl No.</th>
+														<th>Action</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody>
+													<?php
+
+
+														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
+													//$i=1;
+												    while($lapinfos = mysql_fetch_array($lapinfo))
+														{ 
+														if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
+														?>
+                                                    <tr>
+                                                        <td><?php echo $lapinfos['id'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_cc_name'];?></td>
+                                                        <td><?php echo $lapinfos['union_name'];?></td>
+														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
+														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
+														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>
+														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
+														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
+														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
+														<td nowrap="nowrap"><a href=""> Details</a></td>
+                                                    </tr>
+													<?php }} ?>
+                                                   
+                                                    </tbody>
+</table>
+
+<table class="table table-bordered">
+
+                                                    <thead>
+													<tr>
+													<th colspan="11">
+													List of CHCP without Laptop
+													</th>
+													</tr>
                                                     <tr>
                                                         <th>ID</th>
                                                         <th nowrap="nowrap">Org code</th>
@@ -360,7 +429,7 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 													//$i=1;
 												    while($lapinfos = mysql_fetch_array($lapinfo))
 														{ 
-														
+														if(empty($lapinfos['laptop_imei_no'])|| empty($lapinfos['laptop_sim_no'])||empty($lapinfos['laptop_serial_no'])){
 														?>
                                                     <tr>
                                                         <td><?php echo $lapinfos['id'];?></td>
@@ -373,13 +442,13 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
 														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
 														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
-														<td nowrap="nowrap"><a href="">Edit | Delete | Details</a></td>
+														<td nowrap="nowrap"><a href="">Edit</a></td>
                                                     </tr>
-													<?php } ?>
+													<?php }} ?>
                                                    
                                                     </tbody>
-                                                </table>
-
+</table>
+</div>
                                 </div>
 
 								

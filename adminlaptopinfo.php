@@ -205,7 +205,8 @@ echo 'Admin';					?></span>
                                                     <tbody>
 													<?php
 
-													$lapinfo=mysql_query("SELECT * FROM lpda_laptop");
+													$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id GROUP BY lpda.laptop_cc_name");
+												
 													$i=1;
 												    while($lapinfos = mysql_fetch_array($lapinfo))
 														{  ?>
@@ -213,7 +214,7 @@ echo 'Admin';					?></span>
                                                         <td><?php echo $lapinfos['id'];?></td>
                                                         <td><?php echo $lapinfos['laptop_org_code'];?></td>
                                                         <td><?php echo $lapinfos['laptop_cc_name'];?></td>
-                                                        <td><?php echo $lapinfos['laptop_union_name'];?></td>
+                                                        <td><?php echo $lapinfos['union_name'];?></td>
 														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
 														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
 														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>

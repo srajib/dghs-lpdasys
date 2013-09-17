@@ -182,28 +182,30 @@ echo $org_name;					?></span>
                                 <div class="row-fluid">
 
                                     <div class="span12">
-
-                                        <section class="utopia-widget">
-                                            <div class="utopia-widget-title">
+         <section class="utopia-widget">
+                                         <div class="utopia-widget-title">
                                                 <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
-                                                <span>Laptop Computer Collection List</span>
+                                                <span>Name of CHCP & Laptop Information &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="requisition.php">Requisition Form</a></span>
                                             </div>
-
-                                            <div class="utopia-widget-content">
-
-                                                <table class="table table-bordered">
+                                   
+<table class="table table-bordered">
 
                                                     <thead>
+													<tr>
+													<th colspan="11">
+													List of CHCP with received Laptop
+													</th>
+													</tr>
                                                     <tr>
                                                         <th>ID</th>
-                                                        <th>Org code</th>
+                                                        <th nowrap="nowrap">Org code</th>
 														<th nowrap="nowrap">Name of CC</th>
-														<th>Union</th>
+														<th nowrap="nowrap">Union</th>
                                                         <th nowrap="nowrap">New Ward no</th>
-														<th>CHCP Name</th>
+														<th nowrap="nowrap">CHCP Name</th>
 														<th nowrap="nowrap">CHCP Mobile No.</th>
 														<th>IMEI No.</th>
-														<th>SIM No.</th>
+														<th nowrap="nowrap">SIM No.</th>
 														<th nowrap="nowrap">Laptop Sl No.</th>
 														<th>Action</th>
                                                     </tr>
@@ -212,11 +214,11 @@ echo $org_name;					?></span>
                                                     <tbody>
 													<?php
 
-												
-													$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
+														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
 													//$i=1;
 												    while($lapinfos = mysql_fetch_array($lapinfo))
 														{ 
+														if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
 														?>
                                                     <tr>
                                                         <td><?php echo $lapinfos['id'];?></td>
@@ -229,19 +231,64 @@ echo $org_name;					?></span>
 														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
 														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
 														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
-														<td nowrap="nowrap"><a href="">Edit | Delete | Details</a></td>
+														<td nowrap="nowrap"><a href=""> Details</a></td>
                                                     </tr>
-													<?php } ?>
+													<?php }} ?>
                                                    
                                                     </tbody>
-                                                </table>
+</table>
 
-                                                
+<table class="table table-bordered">
 
-                                            </div>
-                                        </section>
+                                                    <thead>
+													<tr>
+													<th colspan="11">
+													List of CHCP without Laptop
+													</th>
+													</tr>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th nowrap="nowrap">Org code</th>
+														<th nowrap="nowrap">Name of CC</th>
+														<th nowrap="nowrap">Union</th>
+                                                        <th nowrap="nowrap">New Ward no</th>
+														<th nowrap="nowrap">CHCP Name</th>
+														<th nowrap="nowrap">CHCP Mobile No.</th>
+														<th>IMEI No.</th>
+														<th nowrap="nowrap">SIM No.</th>
+														<th nowrap="nowrap">Laptop Sl No.</th>
+														<th>Action</th>
+                                                    </tr>
+                                                    </thead>
 
-                                    </div>
+                                                    <tbody>
+													<?php
+
+														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
+													//$i=1;
+												    while($lapinfos = mysql_fetch_array($lapinfo))
+														{ 
+														if(empty($lapinfos['laptop_imei_no'])|| empty($lapinfos['laptop_sim_no'])||empty($lapinfos['laptop_serial_no'])){
+														?>
+                                                    <tr>
+                                                        <td><?php echo $lapinfos['id'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_cc_name'];?></td>
+                                                        <td><?php echo $lapinfos['union_name'];?></td>
+														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
+														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
+														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>
+														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
+														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
+														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
+														<td nowrap="nowrap"><a href="">Edit</a></td>
+                                                    </tr>
+													<?php }} ?>
+                                                   
+                                                    </tbody>
+</table>
+</div>
+                               </div>
 
                                 </div>
 

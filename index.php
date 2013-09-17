@@ -125,7 +125,7 @@ if(isset($_POST['submit']))
                         <h1>Login</h1>
                         <form action="./" method="post" class="utopia">
                             <label>Username:</label>
-                            <input type="text" value="Admin" id="username" name="username" class="span12 utopia-fluid-input validate[required]">
+                            <input type="text" value="Email Address" id="username" name="username" class="span12 utopia-fluid-input validate[required]">
 
                             <label>Password:</label>
                             <input type="password"  id="password" name="password" class="span12 utopia-fluid-input validate[required]" value="Password">
