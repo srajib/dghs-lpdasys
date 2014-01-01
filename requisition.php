@@ -180,24 +180,19 @@ $org_name=$rows['org_name'];
 
 														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
 													    
-													/*	$lapinfo_no=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,
+														$lapinfo_no=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,
 														lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,
 														lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name 
 														WHERE(lpda.laptop_imei_no IS NULL AND lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."')OR(lpda.laptop_sim_no IS NULL AND lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."')OR(lpda.laptop_serial_no IS NULL AND lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."')");
-													*/
+													
 													  
 													// echo  $no_of_requested_laptop=mysql_num_rows($lapinfo);
 													
-													$test = mysql_fetch_array($lapinfo);
-													echo "<pre>";
-													print_r($test);
-													
-													$i=0;$k=0;
+													$i=0;
 												    while($lapinfos = mysql_fetch_array($lapinfo))
 														{ 
-														
-														if(empty($lapinfos['laptop_imei_no'])||empty($lapinfos['laptop_sim_no'])||empty($lapinfos['laptop_serial_no'])){
-														
+														if(empty($lapinfos['laptop_imei_no']) && empty($lapinfos['laptop_sim_no'])&&empty($lapinfos['laptop_serial_no'])){
+														$i=$i+1;
 														?>
                                                     <tr>
                                                         <td><?php echo $lapinfos['id'];?></td>
@@ -211,22 +206,8 @@ $org_name=$rows['org_name'];
 														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
 														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
                                                     </tr>
-													<?php echo $i=$i+1; }} 
-													$j=0;
-													$lapinfo2=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
-													    
-												    while($lapinfos2 = mysql_fetch_array($lapinfo2))
-														{ 
-														if((!empty($lapinfos2['laptop_imei_no']))&&(!empty($lapinfos2['laptop_sim_no']))&&(!empty($lapinfos2['laptop_serial_no']))){
-														echo $j=$j+1;
-														
-														
-														echo "<tr>";
-														echo $lapinfos2['id'];
-														echo "</tr>";
-														}
-														}
-														?>
+													<?php }} ?>
+                                                   
                                                     </tbody>
 													</table>
 													<div style="clear:both;height:20px;">
@@ -270,11 +251,11 @@ Receipt Information
 												   </tr>
  <tr>     
 												   <th colspan="5">Total laptop requested: <?php echo $i;?></th>
-												    <th colspan="6">Received: <?php echo $j;?> </th>
+												    <th colspan="6">Received: <?php echo $i;?> </th>
 												   </tr>
 												   <tr>
 												    <th colspan="5">Total EDGE Modem Requested: <?php echo $i;?></th>     
-												    <th colspan="6"> Received:<?php echo $j;?> </th>
+												    <th colspan="6"> Received:<?php echo $i;?> </th>
 												  
 												
                                                        
@@ -358,6 +339,4 @@ Receipt Information
    
 	   
 </body>
-
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>

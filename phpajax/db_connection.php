@@ -6,10 +6,10 @@
  */
 
 //local connection
-$dbhost='localhost';	
+$dbhost='test.dghs.gov.bd';	
 $dbname='lpdasys';	
 $dbuser='root';
-$dbpass='';
+$dbpass='mistestdb';
 
 mysql_select_db($dbname,mysql_connect($dbhost, $dbuser, $dbpass))or die(mysql_errno());
 

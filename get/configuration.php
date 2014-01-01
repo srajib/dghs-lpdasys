@@ -1,4 +1,4 @@
 <?php
-$connect = mysql_connect("localhost","root","");
-mysql_select_db("lpdasys",$connect); 
+$connect = mysql_connect('127.0.0.1','root','');
+mysql_select_db('dghs_hrm_main',$connect); 
 ?>

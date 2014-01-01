@@ -7,11 +7,10 @@
 
 //local connection
 $dbhost='localhost';	
-$dbname='lpdasys';	
+$dbname='dghs_hrm_main';	
 $dbuser='root';
 $dbpass='';
 
 mysql_select_db($dbname,mysql_connect($dbhost, $dbuser, $dbpass))or die(mysql_errno());
 
-$test='i am hot';
 ?>

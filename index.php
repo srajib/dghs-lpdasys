@@ -1,19 +1,9 @@
 <?php
 session_start();
-if(!empty($_SESSION['loginid']))
-{
-	    if($_SESSION['loginid'] == 2 )
-		{
-			print "<script>";
-			print " self.location='admin.php'"; // Comment this line if you don't want to redirect
-			print "</script>";
-		}
-		else
-		{
-			print "<script>";
-			print " self.location='dashboard.php'"; // Comment this line if you don't want to redirect
-			print "</script>";
-		}
+if(!empty($_SESSION['loginid']) && $_SESSION['loginid']=='user')
+{ 
+	   header("location:dashboard.php");
+		
 }
 ?>
 <!DOCTYPE html>
@@ -67,26 +57,26 @@ $pass = md5($pass2);
 
 if(isset($_POST['submit']))
 {
-	$signin = mysql_query("SELECT * FROM lpda_user WHERE username='$uname' AND password='$pass'");
+	$signin = mysql_query("SELECT * FROM user WHERE username='$uname' AND password='$pass'");
 	$row = mysql_fetch_assoc($signin);
 	$rowsign = mysql_num_rows($signin);
 	if($rowsign > 0)
 	{
 	$msg = '<font color="#009900"><b>Login Successful. Redirecting, please wait.</b></font>';
-	$_SESSION['loginid'] = $row['user_id'];
+	$_SESSION['loginid'] = $row['user_type'];
 	$_SESSION['org'] = $row['organization_id'];
 	$_SESSION['org_code'] = $row['org_code'];
     $_SESSION['username'] = $row['username'];
 	
 		/*$ip = $_SERVER['REMOTE_ADDR'];
 		$login = time();*/
-		if($_SESSION['loginid'] == 2 || $_SESSION['loginid'] == 1)
+		/*if($_SESSION['loginid'] == 'admin')
 		{
 			echo "<meta http-equiv='refresh' content='2; url=admin.php'>";
 		}else{
 			echo "<meta http-equiv='refresh' content='2; url=dashboard.php'>";
 		}
-			
+			*/
 	}
 	else
 	{
@@ -125,10 +115,10 @@ if(isset($_POST['submit']))
                         <h1>Login</h1>
                         <form action="./" method="post" class="utopia">
                             <label>Username:</label>
-                            <input type="text" value="Email Address" id="username" name="username" class="span12 utopia-fluid-input validate[required]">
+                            <input type="text" value="" id="username" name="username" class="span12 utopia-fluid-input validate[required]">
 
                             <label>Password:</label>
-                            <input type="password"  id="password" name="password" class="span12 utopia-fluid-input validate[required]" value="Password">
+                            <input type="password"  id="password" name="password" class="span12 utopia-fluid-input validate[required]" value="">
 
                             <ul class="utopia-login-action">
                                 <li>

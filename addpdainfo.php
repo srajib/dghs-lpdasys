@@ -1,9 +1,33 @@
-<?php session_start(); ?>
+<?php session_start(); 
+	  require_once 'include/db_connection.php'; 
+  
+	$msg='';
+	if(!empty($_POST)){
+	$pda_org_code=$_POST['pda_org_code'];
+	$pda_union_name=$_POST['pda_union_name']; 
+	$pda_ward_no=$_POST['pda_ward_no']; 
+	$pda_person_type=$_POST['pda_person_type']; 
+	$pda_person_name=$_POST['pda_person_name']; 
+	$pda_staff_id=$_POST['pda_staff_id'];
+	$pda_person_mobile_no=$_POST['pda_person_mobile_no']; 
+	$pda_imei_no=$_POST['pda_imei_no']; 
+	$pda_sim_no=$_POST['pda_sim_no']; 
+	$pda_upazila_code=$_POST['pda_upazila_code']; 
+	$pda_updated_datetime=$_POST['pda_updated_datetime'];
+	$pda_updated_by=$_POST['pda_updated_by'];
+	$pda_active=$_POST['pda_active'];
+	
+	$sql="INSERT INTO `lpda_pda` (`id`,`pda_org_code`,`pda_union_name`,`pda_ward_no`,`pda_person_type`,`pda_staff_id`,`pda_person_name`,`pda_person_mobile_no`,`pda_imei_no`,`pda_sim_no`,`pda_upazila_code`,`pda_updated_datetime`,`pda_updated_by`,`pda_active`)
+	VALUES ('','$pda_org_code','$pda_union_name','$pda_ward_no','$pda_person_type','$pda_staff_id','$pda_person_name','$pda_person_mobile_no','$pda_imei_no','$pda_sim_no','$pda_upazila_code','$pda_updated_datetime','$pda_updated_by','$pda_active')";
+	mysql_query($sql);
+	$msg=2;
+	}	             
+	?>
+
 <!DOCTYPE html>
 <html lang="en">
 <?php 
-require_once 'include/db_connection.php'; 
-include('include/inc.functions.generic.php');
+
 if(empty($_SESSION['loginid']))
 {
 	print "<script>";
@@ -13,19 +37,13 @@ if(empty($_SESSION['loginid']))
 
 
 $org_code = $_SESSION['org_code'] ;
-$org = mysql_query("SELECT lpda_organization.org_code,lpda_organization.org_name,lpda_organization.upazila_id
-FROM lpda_organization where lpda_organization.org_code='".$org_code."'");
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_thana_code
+FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
-echo $upazila_id=$rows['upazila_id'];
+$upazila_thana_code=$rows['upazila_thana_code'];
 $org_name=$rows['org_name'];
-//print_r($rows );
-
-
-//print_r($rows_org);
-
 ?>
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:48:05 GMT -->
 <head>
     <meta charset="utf-8">
     <title>Laptop/PDA Distribution System</title>
@@ -52,12 +70,29 @@ $org_name=$rows['org_name'];
 	</script>
 	<script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8">
 	</script>
-	<script>
-		jQuery(document).ready( function() {
-			// binds form submission and fields to the validation engine
-			jQuery("#form3").validationEngine();
-		});
-	</script>
+		<style>
+		 #page_links
+		 {
+		  font-family: arial, verdana;
+		  font-size: 12px;
+		  border:1px #000000 solid;
+		  padding: 6px;
+		  margin: 3px;
+		  background-color: #cccccc;
+		  text-decoration: none;
+		 }
+		 #page_a_link
+		 {
+		  font-family: arial, verdana;
+		  font-size: 12px;
+		  border:1px #000000 solid;
+		  color: #ff0000;
+		  background-color: #cccccc;
+		  padding: 6px;
+		  margin: 3px;
+		  text-decoration: none;
+		 }
+	</style>
     <script type="text/javascript">
         if($.cookie("css")) {
             $('link[href*="utopia-white.css"]').attr("href",$.cookie("css"));
@@ -75,23 +110,6 @@ $org_name=$rows['org_name'];
             });
         });
     </script>
-
-    <!--[if IE 8]>
-    <link href="css/ie8.css" rel="stylesheet">
-    <![endif]-->
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!--[if gte IE 9]>
-      <style type="text/css">
-        .gradient {
-           filter: none;
-        }
-      </style>
-    <![endif]-->
 
 </head>
 
@@ -198,9 +216,35 @@ $email=$_SESSION['username'];?></span>
                             <div class="span9">
                                 <div class="row-fluid">
 
-                                       
+									   	 <?php 
+											if(!empty($_GET['id']))
+											{
+											 $sanctioned_post_id=mysql_real_escape_string($_GET['id']);
+											 $pda_org = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,old_tbl_staff_organization.contact_no,total_manpower.union,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+	LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id WHERE total_manpower.id='$sanctioned_post_id'");				
+											$uscrows = mysql_fetch_assoc($pda_org);
+											$union_name=$uscrows['union'];
+											$designation=$uscrows['designation'];
+											$staff_name=$uscrows['staff_name'];
+											$staff_id=$uscrows['staff_id'];
+											$contact_no=$uscrows['contact_no'];
+											$ward_no ='N/A';
+										   }else{
+										     $union_name='N/A';  
+                                             $designation='N/A';  
+                                             $staff_name='N/A';  
+                                             $contact_no='N/A';
+											 $ward_no ='N/A';
+											 $staff_id=NULL;
+                                            }
+										?>
+									   
                                         <section class="utopia-widget">
-										<form name="" method="post" action="addpdainfo.php" id="form3">
+										<form name="" method="post" action="addpdainfo.php">
+										<?php if(!empty($msg)){ 	
+												echo "<span style='color:red;font-weight:bold;'>  Your data has been inserted succssfully into our system.</span>";
+												}  
+										?>
 										<table class="table">
 										 <input name="pda_org_code" type="hidden" value="<?php echo $org_code; ?>">
 										<tr>
@@ -208,65 +252,49 @@ $email=$_SESSION['username'];?></span>
 										Union Name : 
 										</td>
 										<td>
-										<select name="pda_union_name">
-										 <?php $upazila_id;
-                         $union_row = mysql_query("SELECT lpda_union.union_name,lpda_union.old_upazila_id,lpda_union.old_union_id,lpda_union.union_bbs_code
-FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_union.union_name");
-
-   while ($rows = mysql_fetch_assoc($union_row)) {
-	    echo "<option value=\"" . $rows['union_bbs_code'] . "\">" . $rows['union_name'] . "</option>";
-                                            
-	   }
-
-                                                    ?>
-										</select>
-										if not found , please select nearby union
+										<?php if($union_name){?><input name="pda_union_name" type="hidden" value="<?php echo $union_name; ?>">
+										<?php echo $union_name; } else{ ?> <input name="pda_union_name" type="hidden" value="<?php echo $union_name; ?>"><?php } ?>
 										</td>
 										</tr>
+										
 										<tr>
 										<td>
 										Ward No.(Old) : 
 										</td>
 										<td>
-										<select name="pda_ward_no">
-											<option value="Ward No-1">Ward No-1</option>
-											<option value="Ward No-2">Ward No-2</option>
-											<option value="Ward No-3">Ward No-3</option>
-										</select>
+										<?php if($ward_no){ ?><input name="pda_ward_no" type="hidden" value="<?php echo $ward_no; ?>">
+										<?php echo $ward_no; } else{ ?> <input name="pda_ward_no" type="hidden" value="N/A"><?php } ?>
 										</td>
 										</tr>
+										
+										<tr>
+                                        <td>
+										Name : 
+										</td>
+										<td>
+										<?php if($staff_name){ ?><input name="pda_person_name" type="hidden" value="<?php echo $staff_name; ?>">
+										<?php echo $staff_name; } else{ ?> <input name="pda_person_name" type="hidden" value="N/A"><?php 
+                                         echo $staff_name; } ?>
+										</td>
+										</tr>
+										
 										<tr>
 										<td>
 										Designation : 
 										</td>
 										<td>
-										<select name="pda_person_type" class="validate[required]">
-										<option value="Health Assistant">
-										Health Assistant(HA)
-										</option>
-										<option value="Health Inspector">
-										Health Inspector(HI)
-										</option>
-										<option value="Assistant Health Inspector">
-										Assistant Health Inspector(AHI)
-										</option>
-										</select>
+										<input name="pda_person_type" type="hidden" value="<?php echo $designation;?>">
+										<?php echo $designation;?>
 										</td>
 										</tr>
-										<tr>
-										<td>
-										Name : 
-										</td>
-										<td>
-										<input name="pda_person_name" type="text" class="validate[required]">
-										</td>
-										</tr>
+										
 										<tr>
 										<td>
 										Mobile no : 
 										</td>
 										<td>
-										+88<input name="pda_person_mobile_no" type="text" class="validate[required]">
+										<input name="pda_person_mobile_no" type="hidden" value="<?php echo $contact_no;?>">
+                                        <?php echo $contact_no;?>
 									    </td>
 										</tr>
 										
@@ -295,10 +323,10 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
 									
 										<tr>
 										<td colspan="2">
-										 <input name="pda_upazila_id" type="hidden" value="<?php echo $upazila_id;  ?>">
+										 <input name="pda_upazila_code" type="hidden" value="<?php echo $upazila_thana_code;  ?>">
 										  <input name="pda_updated_datetime" type="hidden" value="<?php echo date('Y-m-d h:m:i');  ?>">
 										   <input name="pda_updated_by" type="hidden" value="<?php echo $org_name; ?>">
-										  
+										    <input name="pda_staff_id" type="hidden" value="<?php echo $staff_id; ?>">
 										   <input name="pda_active" type="hidden" value="1">
 										<input type="submit" value="Submit" name="submit">
 										</td>
@@ -321,100 +349,215 @@ FROM lpda_union WHERE lpda_union.old_upazila_id='".$upazila_id."' GROUP BY lpda_
                                                     <thead>
 													<tr>
 													<th colspan="11">
-													List of person with received PDA
+													List of Health Worker
 													</th>
 													</tr>
                                                     <tr>
                                                         <th>Sl</th>
-                                                        <th>Union BBS Code</th>
-                                                        <th>Ward no</th>
-														<th>Person Type</th>
-														<th>Name of the person</th>
+														<th>Union</th>
+														<th>Designation</th>
+														<th>Staff Name</th>
 														<th>Mobile No.</th>
-														<th>IMEI No.(PDA)</th>
-														<th>SIM No.</th>
+														<th>Actions</th>
                                                     </tr>
                                                     </thead>
 												
                                                     <tbody>
 													<?php
+														    $perpage = 20;
+															 
+															if(isset($_GET["page"])){
+															$page = intval($_GET["page"]);
+															}
+															else {
+															$page = 1;
+															}
+															$calc = $perpage * $page;
+															$start = $calc - $perpage;
 													
-													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
+													
+													$pda_info = mysql_query("SELECT total_manpower.id,total_manpower.union,total_manpower.designation,total_manpower.designation_code FROM total_manpower_imported_sanctioned_post_copy AS total_manpower
+WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND total_manpower.org_code='$org_code' Limit $start, $perpage");
+													/*
+													mysql_query("SELECT old_tbl_staff_organization.staff_name,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
+WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND old_tbl_staff_organization.org_code='$org_code'");
+													*/
+													
 													$i=1;
-												    while($pdainfos = mysql_fetch_array($pdainfo))
+												    while($pdainfos = mysql_fetch_array($pda_info))
 														{  
-														if(!empty($pdainfos['pda_imei_no'])&&!empty($pdainfos['pda_sim_no'])){
-												        ?>
+														?>
                                                      <tr>
-                                                       
-                                                        <td><?php echo $pdainfos['id'];?></td>
-                                                        <td><?php echo $pdainfos['union_name'];?></td>
-                                                        <td><?php echo $pdainfos['pda_ward_no'];?></td>
-														<td><?php echo $pdainfos['pda_person_type'];?></td>
-														<td><?php echo $pdainfos['pda_person_name'];?></td>
-														<td><?php echo $pdainfos['pda_person_mobile_no'];?></td>
-														<td><?php echo $pdainfos['pda_imei_no'];?></td>
-														<td><?php echo $pdainfos['pda_sim_no'];?></td>
-                                                    </tr>
+                                                        <td><?php echo $i++.'.';?></td>
+														<td><?php echo $pdainfos['union'];?></td>
+														<td><?php echo $pdainfos['designation'];?></td>
+														 <td><?php 
+														 
+														  $total_manpower_id=$pdainfos['id'];
+														  
+														 if($total_manpower_id){ 
+														$pda_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
+WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND total_manpower.id=' $total_manpower_id'");
 
-                                                   <?php }} ?>
+														$pda_staff_rows = mysql_fetch_assoc($pda_staff);
+														$staff_name=$pda_staff_rows['staff_name'];
+														$contact_no =$pda_staff_rows['contact_no'];
+														} 
+														 if($staff_name){echo $staff_name;}else echo 'N/A';?></td>
+                                                        <td><?php  if($contact_no){echo $contact_no;}else echo 'N/A';//echo $pdainfos['contact_no'];?></td>
+                                                    <td nowrap="nowrap"><a href="addpdainfo.php?id=<?php echo $pdainfos['id'];?>">Update</a></td>
+                                                
+													</tr>
+
+                                                   <?php } ?>
                                                     </tbody>
                                                 </table>
 												
-												   <table class="table table-bordered">
+								<table width="400" cellspacing="2" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td align="center">
+ 
+<?php
+ 
+if(isset($page))
+ 
+{
+//$lapinfo=mysql_query("SELECT * FROM organization where org_type_code='1039' AND upazila_id='$upazila_id'");
+													
+$result = mysql_query("SELECT COUNT(*) AS Total FROM total_manpower_imported_sanctioned_post_copy AS total_manpower
+WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND total_manpower.org_code='$org_code'");
+													
+$rows = mysql_num_rows($result);
+ 
+if($rows)
+ 
+{
+ 
+$rs = mysql_fetch_assoc($result);
+ 
+$total = $rs["Total"];
+ 
+}
+ 
+$totalPages = ceil($total / $perpage);
+ 
+if($page <=1 ){
+ 
+echo "<span id='page_links' style='font-weight: bold;'>Prev</span>";
+ 
+}
+ 
+else
+ 
+{
+ 
+$j = $page - 1;
+ 
+echo "<span><a id='page_a_link' href='addpdainfo.php?page=$j'>< Prev</a></span>";
+ 
+}
+ 
+for($i=1; $i <= $totalPages; $i++)
+ 
+{
+ 
+if($i<>$page)
+ 
+{
+ 
+echo "<span><a id='page_a_link' href='addpdainfo.php?page=$i'>$i</a></span>";
+ 
+}
+ 
+else
+ 
+{
+ 
+echo "<span id='page_links' style='font-weight: bold;'>$i</span>";
+ 
+}
+ 
+}
+ 
+if($page == $totalPages )
+ 
+{
+ 
+echo "<span id='page_links' style='font-weight: bold;'>Next ></span>";
+ 
+}
+ 
+else
+ 
+{
+ 
+$j = $page + 1;
+ 
+echo "<span><a id='page_a_link' href='addpdainfo.php?page=$j'>Next</a></span>";
+ 
+}
+ 
+}
+					
+?></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
-                                                    <colgroup>
-                                                        <col class="utopia-col-0">
-                                                        <col class="utopia-col-1">
-                                                        <col class="utopia-col-0">
-                                                        <col class="utopia-col-1">
-                                                        <col class="utopia-col-0">
-                                                    </colgroup>
+<table class="table table-bordered">
 
                                                     <thead>
 													<tr>
 													<th colspan="11">
-													List of person without PDA
+													List of Field worker who received PDA
 													</th>
 													</tr>
                                                     <tr>
-                                                        <th>Sl</th>
-                                                        <th>Union BBS Code</th>
-                                                        <th>Ward no</th>
-														<th>Person Type</th>
-														<th>Name of the person</th>
-														<th>Mobile No.</th>
-														<th>IMEI No.(PDA)</th>
-														<th>SIM No.</th>
+                                                        <th>ID</th>
+														
+														<th nowrap="nowrap">Organization</th>
+                                                        <th nowrap="nowrap">Org code</th>
+														<th nowrap="nowrap">Union</th>
+                                                        <th nowrap="nowrap">New Ward no</th>
+														<th nowrap="nowrap">Staff Name</th>
+														<th nowrap="nowrap">Designation</th>
+														<th nowrap="nowrap">Staff Mobile No.</th>
+														<th nowrap="nowrap">IMEI No.</th>
+														<th nowrap="nowrap">SIM No.</th>
                                                     </tr>
                                                     </thead>
-												
+
                                                     <tbody>
 													<?php
-													
-													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
-													$i=1;
-												    while($pdainfos = mysql_fetch_array($pdainfo))
-														{  
-														if(empty($pdainfos['pda_imei_no'])||empty($pdainfos['pda_sim_no'])){
-												        ?>
-                                                     <tr>
-                                                       
-                                                        <td><?php echo $pdainfos['id'];?></td>
-                                                        <td><?php echo $pdainfos['union_name'];?></td>
-                                                        <td><?php echo $pdainfos['pda_ward_no'];?></td>
-														<td><?php echo $pdainfos['pda_person_type'];?></td>
-														<td><?php echo $pdainfos['pda_person_name'];?></td>
-														<td><?php echo $pdainfos['pda_person_mobile_no'];?></td>
-														<td><?php echo $pdainfos['pda_imei_no'];?></td>
-														<td><?php echo $pdainfos['pda_sim_no'];?></td>
-                                                    </tr>
 
-                                                   <?php }} ?>
+
+														$lapinfo=mysql_query("SELECT pda.id,pda.pda_org_code,pda.pda_union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no FROM lpda_pda AS pda WHERE pda.pda_org_code='".$org_code."' GROUP BY pda.pda_person_name");
+													//$i=1;
+												    while($lapinfos = mysql_fetch_array($lapinfo))
+														{ 
+														if(!empty($lapinfos['pda_imei_no'])&&!empty($lapinfos['pda_sim_no'])){
+														?>
+                                                    <tr>
+                                                        <td><?php echo $lapinfos['id'];?></td>
+                                                        <td><?php echo $org_name;?></td>
+                                                        <td><?php echo $lapinfos['pda_org_code'];?></td>
+                                                        <td><?php echo $lapinfos['pda_union_name'];?></td>
+														<td><?php echo $lapinfos['pda_ward_no'];?></td>
+														<td><?php echo $lapinfos['pda_person_name'];?></td>
+														<td><?php echo $lapinfos['pda_person_type'];?></td>
+														<td><?php echo $lapinfos['pda_person_mobile_no'];?></td>
+														<td><?php echo $lapinfos['pda_imei_no'];?></td>
+														<td><?php echo $lapinfos['pda_sim_no'];?></td>
+                                                    </tr>
+													<?php }} ?>
+                                                   
                                                     </tbody>
-                                                </table>
+</table>
+				  
                                 </div>
 
 								
@@ -451,98 +594,13 @@ FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_un
 <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="js/jquery.datatable.js"></script>
 <script type="text/javascript" src="js/tables.js"></script>
-<script type="text/javascript" src="js/jquery.sparkline.js"></script>
-<script type="text/javascript" src="js/jquery.vticker-min.js"></script>
-<script type="text/javascript" src="js/ui/datepicker.js"></script>
-<script type="text/javascript" src="js/upload/load-image.min.js"></script>
-<script type="text/javascript" src="js/upload/image-gallery.min.js"></script>
-<script type="text/javascript" src="js/jquery.simpleWeather.js"></script>
 <script src="js/jquery.validationEngine.js" type="text/javascript"></script>
 <script src="js/jquery.validationEngine-en.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/maskedinput.js"></script>
-<script type="text/javascript" src="js/chosen.jquery.js"></script>
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAeTbCOpuPIKT4i9n8iUQsBHNUt_MWjtog&amp;sensor=false"></script>
-<script type="text/javascript" src="js/gmap3.js"></script>
 <script type="text/javascript" src="js/header6654.js?v1"></script>
 <script type="text/javascript" src="js/sidebar.js"></script>
 
-<script type="text/javascript">
 
-			
-    $(function() {
 	
-	// load district
-            $('#laptop_org_code').change(function() {
-                //$("#loading_content").show();
-                var org_code = $('#laptop_org_code').val();
-                $.ajax({
-                    type: "POST",
-                    url: 'get/get_cc_list.php',
-                    data: {org_code: org_code},
-                    dataType: 'json',
-                    success: function(data)
-                    {
-                       // $("#loading_content").hide();
-                        var laptop_cc_name = document.getElementById('laptop_cc_name');
-                        laptop_cc_name.options.length = 0;
-                        for (var i = 0; i < data.length; i++) {
-                            var d = data[i];
-                            laptop_cc_name.options.add(new Option(d.text, d.value));
-                        }
-                    }
-                });
-            });
-
-		$('#laptop_electricity_source_value').change(function() {
-										  var elec_source = $('#laptop_electricity_source_value').find('option:selected').text();
-											$("#laptop_elect_source").val(elec_source);
-										 });
-			
-        $( "#utopia-dashboard-datepicker" ).datepicker().css({marginBottom:'20px'});
-
-        jQuery("#validation").validationEngine();
-        $("#phone").mask("(999) 9999999999");
-        $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-
-        $.simpleWeather({
-            zipcode: '10001',
-            unit: 'f',
-            success: function(weather) {
-                html = '<h2>'+weather.city+', '+weather.region+'</h2>';
-                html += '<img style="float:left" width="125px " src="'+weather.image+'">';
-                html += '<p>'+weather.temp+'&deg; '+weather.units.temp+'<br /><span>'+weather.currently+'</span></p>';
-                html += '<a href="'+weather.link+'">View Forecast &raquo;</a>';
-
-                $("#utopia-dashboard-weather").css({marginBottom:'20px'}).html(html);
-            },
-            error: function(error) {
-                $("#utopia-dashboard-weather").html('<p>'+error+'</p>');
-            }
-        });
-        
-    });
-
-</script>
-	<?php 
-	                //echo "<pre>";
-					//print_r($_POST);   
-	               
-				    if($_POST['submit']){			
-					$exception_field=array('submit','param');
-					$str=createMySqlInsertString($_POST, $exception_field);
-					/******************************************************/	
-					$str_k=$str['k'];
-					$str_v=$str['v'];
-					$sql="INSERT INTO lpda_pda($str_k) values ($str_v)";
-					mysql_query($sql);
-					echo "your data inserted succssfully into our system";
-					print "<script>";
-					print " self.location=pdainfo.php'"; // Comment this line if you don't want to redirect
-					print "</script>";
-	}
-	?>
 					
 </body>
-
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>

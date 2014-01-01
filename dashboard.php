@@ -1,26 +1,20 @@
 <?php session_start();
 //error_reporting(0);
 require_once 'include/db_connection.php'; 
-if(empty($_SESSION['loginid']))
-{
-	print "<script>";
-	print " self.location='index.php'"; // Comment this line if you don't want to redirect
-	print "</script>";
-}
 
-if($_SESSION['loginid'] <= 2)
-{
-	print "<script>";
-	print " self.location='dashboard.php'"; // Comment this line if you don't want to redirect
-	print "</script>";
-} ?>
+if(!empty($_SESSION['loginid']) && $_SESSION['loginid']=='user')
+{ 
+	  
+		
+
+	?>
 <!DOCTYPE html>
 <html lang="en">
 <?php    
 
 $org_code = $_SESSION['org_code'] ;
-$org = mysql_query("SELECT lpda_organization.org_code,lpda_organization.org_name,lpda_organization.upazila_id
-FROM lpda_organization where lpda_organization.org_code='".$org_code."'");
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_id
+FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
 $upazila_id=$rows['upazila_id'];
@@ -553,3 +547,8 @@ $email=$_SESSION['username'];?></span>
 
 <!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>
+<?php }else{
+
+		 header("location:index.php");
+		
+} ?>

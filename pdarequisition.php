@@ -23,8 +23,6 @@ $district_name=$rows['district_name'];
 $upazila_name=$rows['upazila_thana_name'];
 $org_name=$rows['org_name'];
 ?>
-
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:48:05 GMT -->
 <head>
     <meta charset="utf-8">
     <title>Laptop/PDA Distribution System</title>
@@ -176,11 +174,11 @@ $org_name=$rows['org_name'];
 													<?php
 													
 													$pdainfo2=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
+FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.id");
 													$i=0;$k=0;
 												    while($pdainfos = mysql_fetch_array($pdainfo2))
 														{  
-														if(empty($pdainfos['pda_imei_no'])||empty($pdainfos['pda_sim_no'])){
+														if((empty($pdainfos['pda_imei_no'])) && (empty($pdainfos['pda_sim_no']))){
 												        ?>
                                                      <tr>
                                                        
@@ -201,7 +199,7 @@ FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_un
 </div>
 <?php
 $pdainfo3=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
+FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.id");
 													$j=0;
 												    while($pdainfos = mysql_fetch_array($pdainfo3))
 														{  
@@ -334,6 +332,4 @@ Receipt Information
    
 	   
 </body>
-
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>

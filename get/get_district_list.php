@@ -1,18 +1,19 @@
 <?php
-include('configuration');
+
+  include('configuration.php');
 
 $div_id = $_POST['div_id'];
 
 $sql = "SELECT 
-            lpda_district.district_bbs_code,
-            lpda_district.old_district_id,
-            lpda_district.district_name
+            admin_district.district_bbs_code,
+            admin_district.old_district_id,
+            admin_district.district_name
         FROM
-            lpda_district
+            admin_district
         WHERE
-            lpda_district.division_id =$div_id
+            admin_district.division_id =$div_id
         ORDER BY
-            lpda_district.district_name";
+            admin_district.district_name";
 $result = mysql_query($sql) or die(mysql_error() . "<br /><br />Code:<b>get_district_list:1</b><br /><br /><b>Query:</b><br />___<br />$sql<br />");
 
 $data = array();

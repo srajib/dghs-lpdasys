@@ -1,16 +1,14 @@
 <?php
-$connect = mysql_connect("localhost","root","");
-mysql_select_db("lpdasys",$connect); 
+  include('configuration.php');
+  $org_code = $_POST['org_code'];
 
- $org_code = $_POST['org_code'];
-
-$sql = "SELECT lpda_organization.org_code,
-            lpda_organization.org_name,
-            lpda_organization.organization_id
+$sql = "SELECT organization.org_code,
+            organization.org_name,
+            organization.organization_id
         FROM
-            lpda_organization
+            organization
         WHERE
-           lpda_organization.org_code='$org_code'";
+           organization.org_code='$org_code'";
 $result = mysql_query($sql) or die(mysql_error() . "<br /><br />Code:<b>get_cc_list:1</b><br /><br /><b>Query:</b><br />___<br />$sql<br />");
 
 $data = array();

@@ -145,6 +145,12 @@
                     "alertText": "* This Organization already taken Laptop",
                     "alertTextLoad": "* Validating, please wait"
                 },
+				"ajaxUserCallPhpUSC": {
+                    "url": "phpajax/ajaxValidateFieldUserUSC.php",
+                    "alertTextOk": "*This Organization have not taken any laptop yet",
+                    "alertText": "* This Organization already taken Laptop",
+                    "alertTextLoad": "* Validating, please wait"
+                },
                 "ajaxNameCall": {
                     // remote json service location
                     "url": "ajaxValidateFieldName",
