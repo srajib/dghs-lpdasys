@@ -1,41 +1,9 @@
-<?php session_start(); 
-error_reporting(E_ALL);
-ini_set('display_errors','On');
-require_once 'include/db_connection.php'; 
-  
-				   $msg='';
-				   if(!empty($_POST)){
-				    $laptop_org_code=$_POST['laptop_org_code'];
-				    $laptop_cc_name=$_POST['laptop_cc_name']; 
-					$laptop_union_name=$_POST['laptop_union_name']; 
-					$laptop_ward_no=$_POST['laptop_ward_no']; 
-					$laptop_staff_id=$_POST['laptop_staff_id'];
-					$laptop_chcp_name=$_POST['laptop_chcp_name']; 
-					$laptop_chcp_mobile_no=$_POST['laptop_chcp_mobile_no']; 
-					$laptop_upazila_code=$_POST['laptop_upazila_id']; 
-					$laptop_updated_datetime=$_POST['laptop_updated_datetime'];
-					$laptop_updated_org_code=$_POST['laptop_updated_org_code'];
-					$laptop_updated_by=$_POST['laptop_updated_by'];
-					$laptop_active=$_POST['laptop_active'];
-					$laptop_imei_no=$_POST['laptop_imei_no'];
-					$laptop_sim_no=$_POST['laptop_sim_no'];
-					$laptop_serial_no=$_POST['laptop_serial_no'];
-					$laptop_electricity_source_value=$_POST['laptop_electricity_source_value'];
-					
-				    $sql="INSERT INTO `lpda_laptop` (`id`,`laptop_org_code`,`laptop_cc_name`,`laptop_union_name`,`laptop_ward_no`,`laptop_staff_id`,`laptop_chcp_name`,`laptop_chcp_mobile_no`,`laptop_electricity_source_value`,`laptop_imei_no`,`laptop_sim_no`,`laptop_serial_no`,`laptop_upazila_code`,`laptop_updated_by`,`laptop_updated_org_code`,`laptop_active`)
-					VALUES ('','$laptop_org_code','$laptop_cc_name','$laptop_union_name','$laptop_ward_no','$laptop_staff_id','$laptop_chcp_name','$laptop_chcp_mobile_no','$laptop_electricity_source_value','$laptop_imei_no','$laptop_sim_no','$laptop_serial_no','$laptop_upazila_code','$laptop_updated_by','$laptop_updated_org_code','$laptop_active')";
-					mysql_query($sql);
-					$msg=2;
-					
-				
-	}	             
-	?>
-
-			  
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php 
-
+require_once 'include/db_connection.php'; 
+include('include/inc.functions.generic.php');
 if(empty($_SESSION['loginid']))
 {
 	print "<script>";
@@ -51,6 +19,9 @@ FROM organization where organization.org_code='".$org_code."'");
 $rows = mysql_fetch_assoc($org);
 $upazila_id=$rows['upazila_id'];
 $org_name=$rows['org_name'];
+//print_r($rows );
+
+//print_r($rows_org);
 
 ?>
 <!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:48:05 GMT -->
@@ -75,40 +46,16 @@ $org_name=$rows['org_name'];
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.cookie.js"></script>
 		<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
-	<!--
+	
 	<script src="js/languages/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8">
 	</script>
 	<script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8">
 	</script>
-	-->
-	<style>
- #page_links
- {
-  font-family: arial, verdana;
-  font-size: 12px;
-  border:1px #000000 solid;
-  padding: 6px;
-  margin: 3px;
-  background-color: #cccccc;
-  text-decoration: none;
- }
- #page_a_link
- {
-  font-family: arial, verdana;
-  font-size: 12px;
-  border:1px #000000 solid;
-  color: #ff0000;
-  background-color: #cccccc;
-  padding: 6px;
-  margin: 3px;
-  text-decoration: none;
- }
-	</style>
 	<script>
-		/*jQuery(document).ready( function() {
+		jQuery(document).ready( function() {
 			// binds form submission and fields to the validation engine
 			jQuery("#form3").validationEngine();
-		});*/
+		});
 	</script>
     <script type="text/javascript">
         if($.cookie("css")) {
@@ -147,14 +94,14 @@ $org_name=$rows['org_name'];
 
                     <a href="#" class="utopia-logo"><img src="img/gov_logo.gif" alt="Utopia" height="50" width="80" /></a>
                     <span style="font-size:24px;font-weight:bold;">Laptop/PDA Distribution System - <?php 
-						echo $org_name;					
-						$org_code=$_SESSION['org_code'];
-						$email=$_SESSION['username'];?></span>
+echo $org_name;					
+$org_code=$_SESSION['org_code'];
+$email=$_SESSION['username'];?></span>
                     <div class="header-right">
 
                         <div class="header-divider">&nbsp;</div>
 
-                      <!--  <div class="search-panel header-divider">
+                        <div class="search-panel header-divider">
                             <div class="search-box">
                                 <img src="img/icons/zoom.png" alt="Search">
                                 <form action="#" method="post">
@@ -162,8 +109,6 @@ $org_name=$rows['org_name'];
                                 </form>
                             </div>
                         </div>
-						
-						-->
 
 
                         <div class="user-panel header-divider">
@@ -221,62 +166,23 @@ $org_name=$rows['org_name'];
             </div>
         </div>
 
+        <!-- Sidebar end -->
+
+        <!-- Body start -->
             <div class="span10 body-container">
-        
-                <?php 
-				
-				if(!empty($_GET['org_code'])){
-				 $cc_org_code=mysql_real_escape_string($_GET['org_code']);
-				 $cc_org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_id,organization.union_name,organization.ward_code,organization.source_of_electricity_main_code
-FROM organization where organization.org_code='".$cc_org_code."'");
-	
-				$ccrows = mysql_fetch_assoc($cc_org);
-				$cc_upazila_id=$ccrows['upazila_id'];
-				$cc_org_name=$ccrows['org_name'];
-				$cc_org_code=$ccrows['org_code'];
-				$cc_union_name=$ccrows['union_name'];
-				$cc_ward_code=$ccrows['ward_code'];
-				$source_of_electricity_main_code=$ccrows['source_of_electricity_main_code'];
-				
-				}else{
-				$cc_org_name='N/A';
-				$org_code='N/A';
-				$cc_org_code='N/A';
-				$cc_union_name='N/A';
-				$cc_ward_code='N/A';
-				$source_of_electricity_main_code='N/A';
-				}
-				
-				 if($source_of_electricity_main_code){
-				 $elect_source = mysql_query("SELECT org_source_of_electricity_main.electricity_source_code,org_source_of_electricity_main.electricity_source_name
-FROM org_source_of_electricity_main where org_source_of_electricity_main.electricity_source_code='".$source_of_electricity_main_code."'");
-                 
-				 $source_of_electricityrows = mysql_fetch_assoc($elect_source);	
-				 
-                 $electricity_source=$source_of_electricityrows['electricity_source_name'];				
-			}else{
-		     $electricity_source='N/A';
-			 }
+        <!--    
+<div class="container">
+	<h4>There are serious errors in your form submission, please see below for details.</h4>
+	<ol>
+		<li><label for="laptop_org_code" class="error">Please select your Organization Code</label></li>
+		<li><label for="laptop_cc_name" class="error">Please select your Organization Name</label></li>
+		<li><label for="claptop_chcp_mobile_no" class="error">Please enter CHCP contact <b>number</b> (between 2 and 8 characters)</label></li>
+		<li><label for="address" class="error">Please enter your address (at least 3 characters)</label></li>
+		<li><label for="avatar" class="error">Please select an image (png, jpg, jpeg, gif)</label></li>
+		<li><label for="cv" class="error">Please select a document (doc, docx, txt, pdf)</label></li>
+	</ol>
+</div>-->
 
-				if($cc_org_code){ 
-				$cc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
-				LEFT JOIN total_manpower_imported_sanctioned_post_copy as total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
-				where old_tbl_staff_organization.org_code='$cc_org_code' AND total_manpower.designation_code='11960'");
-
-				$cc_staff_rows = mysql_fetch_assoc($cc_staff);
-				$staff_name=$cc_staff_rows['staff_name'];
-				$contact_no =$cc_staff_rows['contact_no'];
-				$laptop_staff_id=$cc_staff_rows['staff_id'];
-				}
-				else
-				{
-				$staff_name='N/A';
-				$contact_no ='N/A';
-				$laptop_staff_id=0;
-				}
-				
-				
-				?>
 
                 <div class="row-fluid">
 
@@ -287,38 +193,23 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
                             <div class="span9">
                                 <div class="row-fluid">
                                         <section class="utopia-widget">
-										
-										<form name="" method="post" action="" class="formular">
-										<?php 
-										 $msg_cc='';
-										 if(!empty($_GET['org_code'])){
-										 $cc_org_code=mysql_real_escape_string($_GET['org_code']);
-										 $cclapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,lpda.laptop_electricity_source_value,lpda.laptop_union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,lpda.laptop_serial_no FROM lpda_laptop AS lpda WHERE lpda.laptop_org_code='".$cc_org_code."'");
-										 $rows = mysql_num_rows($cclapinfo);
-										 if($rows>0){
-										 $msg_cc=1;
-										 }
-			
-										}
-										?>
-										 
-										<?php if(!empty($msg)){ 	
-												echo "<span style='color:green;font-weight:bold;margin-left:5px;>  Your data has been inserted succssfully into our system.</span>";
-												}  
-										?>
-											<?php if(!empty($msg_cc)){ 	
-												echo "<span style='color:red;font-weight:bold;margin-left:5px;'>  This CC already taken laptop. So, you can not take any laptop .</span>";
-												}  
-										?>
+										<form name="" method="post" action="addlaptopinfo.php" class="formular" id="form3">
 										<table class="table">
 										<tr>
 										<td>
                                         Org Code 
 										</td>
 										<td colspan="2">
-										 <?php if($cc_org_code){echo $cc_org_code;}else{echo 'N/A';}?>
-                                     <?php if($cc_org_code){?><input type='hidden' name='laptop_org_code' value='<?php echo $cc_org_code;?>'><?php } ?>
-												
+										<select name="laptop_org_code" id="laptop_org_code" class="validate[required,ajax[ajaxUserCallPhp]]">
+										   <?php
+                         $upazila_row = mysql_query("SELECT organization.org_code,id,organization.org_name
+FROM organization WHERE organization.org_type_code='1039' AND upazila_id='".$upazila_id."' ORDER BY organization.org_code ASC ");
+
+   while ($rows = mysql_fetch_assoc($upazila_row)) {
+	    echo "<option value=\"" . $rows['org_code'] . "\">" . $rows['org_code'] .' : '.$rows['org_name']. "</option>";
+                                            
+	   }    ?>
+										</select>			
 										</td>
 										</tr>
 										<tr>
@@ -326,8 +217,10 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										Name of CC : 
 										</td>
 										<td colspan="2">
-									    <?php if($cc_org_name){echo $cc_org_name;}else{echo 'N/A';}?>
-										 <?php if($cc_org_name){?><input type='hidden' name='laptop_cc_name' value='<?php echo $cc_org_name;?>'><?php } ?>
+										 <select id="laptop_cc_name" name="laptop_cc_name" class="validate[required]">
+                                            <option value="">Select CC Name</option>                                        
+                                         </select>
+										 <a href="addcc.php">If you want to add CC, please click here. </a>
 										</td>
 										</tr>
 										<tr>
@@ -335,25 +228,37 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										Union Name : 
 										</td>
 										<td colspan="2">
-									<?php if($cc_union_name)
-											{ 
-											 echo $cc_union_name;
-											}else{echo 'N/A';}
-											?>
-										 <?php if($cc_union_name){?><input type='hidden' name='laptop_union_name' value='<?php echo $cc_union_name;?>'><?php }else{ ?>	
-										<input type='hidden' name='laptop_union_name' value='<?php echo 'N/A';?>'> <?php } ?>
+										<select name="laptop_union_name" class="validate[required]">
+										 <?php  $upazila_id;
+                         $union_row = mysql_query("SELECT admin_union.union_name,admin_union.old_upazila_id,admin_union.old_union_id,admin_union.union_bbs_code
+FROM admin_union WHERE admin_union.old_upazila_id='".$upazila_id."' GROUP BY admin_union.union_name");
+
+   while ($rows = mysql_fetch_assoc($union_row)) {
+	    echo "<option value=\"" . $rows['union_bbs_code'] . "\">" . $rows['union_name'] . "</option>";
+                                            
+	   }
+
+                                                    ?>
+										</select>
+										if not found , please select nearby union
 										</td>
 										</tr>
 										<tr>
-										
 										<td>
-										Ward No (New) :
-										 <?php if($cc_ward_code){?><input type='hidden' name='laptop_ward_no' value='<?php echo $cc_ward_code;?>'><?php }else{ ?>	
-										<input type='hidden' name='laptop_ward_no' value='<?php echo 'N/A';?>'> <?php } ?>
-										
+										Ward No (New) : 
 										</td>
 										<td>
-										<?php if($cc_ward_code){ echo $cc_ward_code;}else {echo 'N/A';} ?>
+											<select name="laptop_ward_no" class="validate[required]">
+											<option value="Ward No-1">Ward No-1</option>
+											<option value="Ward No-2">Ward No-2</option>
+											<option value="Ward No-3">Ward No-3</option>
+											<option value="Ward No-4">Ward No-4</option>
+											<option value="Ward No-5">Ward No-5</option>
+											<option value="Ward No-6">Ward No-6</option>
+											<option value="Ward No-7">Ward No-7</option>
+											<option value="Ward No-8">Ward No-8</option>
+											<option value="Ward No-9">Ward No-9</option>
+											</select>
 										</td>
 										<td>
 											<b>Who already got the laptop  (Please fill up the following information):</b>
@@ -364,9 +269,7 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										CHCP Name : 
 										</td>
 										<td>
-										<?php if($staff_name){ echo $staff_name;} else {echo 'N/A';}?>
-										<?php if($staff_name){?><input type='hidden' name='laptop_chcp_name' value='<?php echo $staff_name;?>'><?php }else{ ?>	
-										<input type='hidden' name='laptop_chcp_name' value='<?php echo 'N/A';?>'> <?php } ?>
+										<input name="laptop_chcp_name" type="text" class="validate[required]">
 										</td>
 										<td>
 										IMEI No : <input name="laptop_imei_no" type="text">
@@ -377,9 +280,7 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										<label for="laptop_chcp_mobile_no">CHCP Mobile no : </label>
 										</td>
 										<td>
-										<span style="padding-top:2px;"><?php if($contact_no){ echo $contact_no;} else {echo 'N/A';}?></span>
-											<?php if($contact_no){?><input type='hidden' name='laptop_chcp_mobile_no' value='<?php echo $contact_no;?>'><?php }else{ ?>	
-										<input type='hidden' name='laptop_chcp_mobile_no' value='<?php echo 'N/A';?>'> <?php } ?>
+										<span style="padding-top:2px;">+88</span><input name="laptop_chcp_mobile_no" id="laptop_chcp_mobile_no" class="validate[required,custom[phone]]">
 									    </td>
 										<td>
 										SIM No : <input name="laptop_sim_no" type="text">
@@ -391,9 +292,25 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										</td>
 										<td>
 										
-										 <?php if($electricity_source){echo $electricity_source;}else {echo 'N/A';};?>
-										 <?php if($electricity_source){?><input type='hidden' name='laptop_electricity_source_value' value='<?php echo $electricity_source;?>'><?php }else{ ?>	
-										<input type='hidden' name='laptop_electricity_source_value' value='<?php echo 'N/A';?>'> <?php } ?>
+										<select name="laptop_electricity_source_value" id="laptop_electricity_source_value" class="validate[required]">
+                                                    <option value="">Select electricity source</option>
+                                                    <?php
+                                                    $sql = "SELECT
+                                                            lpda_source_of_electricity.electricity_source_code,
+                                                            lpda_source_of_electricity.electricity_source_name
+                                                        FROM
+                                                            lpda_source_of_electricity
+                                                        ORDER BY
+                                                            lpda_source_of_electricity.electricity_source_name ASC";
+                                                    $result = mysql_query($sql) or die(mysql_error() . "<br /><br />Code:<b>loadorg_type:1</b><br /><br /><b>Query:</b><br />___<br />$sql<br />");
+
+                                                    while ($rows = mysql_fetch_assoc($result)) {
+                                                        echo "<option value=\"" . $rows['electricity_source_code'] . "\">" . $rows['electricity_source_name'] . "</option>";
+                                                    }
+                                                    ?>
+                                         </select>
+										<input name="laptop_elect_source" type="hidden" value="" id="laptop_elect_source">
+										
 										</td>
 										<td>
 										Laptop Serial#: <input name="laptop_serial_no" type="text">
@@ -409,12 +326,8 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										  <input name="laptop_updated_datetime" type="hidden" value="<?php echo date('Y-m-d h:m:i');  ?>">
 										   <input name="laptop_updated_by" type="hidden" value="<?php echo $org_name; ?>">
 										   <input name="laptop_updated_org_code" type="hidden" value="<?php echo $org_code; ?>">
-										   <input name="laptop_staff_id" type="hidden" value="<?php echo $laptop_staff_id;?>">
 										   <input name="laptop_active" type="hidden" value="1">
-										   <?php if(!empty($msg_cc)) {} else{ ?>
-										     <input type="submit" value="Submit" name="submit">
-										   <?php  } ?>
-										
+										<input type="submit" value="Submit" name="submit">
 										</td>
 										
 									<td>
@@ -439,160 +352,52 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
                                                     <thead>
 													<tr>
 													<th colspan="11">
-													List of CC
+													List of CHCP with received Laptop
 													</th>
 													</tr>
                                                     <tr>
-                                                        <th>Sl#</th>
+                                                        <th>ID</th>
                                                         <th nowrap="nowrap">Org code</th>
 														<th nowrap="nowrap">Name of CC</th>
+														<th nowrap="nowrap">Union</th>
+                                                        <th nowrap="nowrap">New Ward no</th>
 														<th nowrap="nowrap">CHCP Name</th>
 														<th nowrap="nowrap">CHCP Mobile No.</th>
+														<th nowrap="nowrap">Source of Electricity</th>
+														<th>IMEI No.</th>
+														<th nowrap="nowrap">SIM No.</th>
+														<th nowrap="nowrap">Laptop Sl No.</th>
 														<th>Action</th>
                                                     </tr>
                                                     </thead>
 
                                                     <tbody>
 													<?php
-															$perpage = 20;
-															 
-															if(isset($_GET["page"])){
-															$page = intval($_GET["page"]);
-															}
-															else {
-															$page = 1;
-															}
-															$calc = $perpage * $page;
-															$start = $calc - $perpage;
 
-												    $lapinfo=mysql_query("SELECT * FROM organization where org_type_code='1039' AND upazila_id='$upazila_id' Limit $start, $perpage");
-													
-													$rows = mysql_num_rows($lapinfo);
- 
-													if($rows){
-													$i = 0;$j=1;
+
+														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,s.electricity_source_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN admin_union AS u ON u.union_bbs_code = lpda.laptop_union_name INNER JOIN lpda_source_of_electricity AS s ON s.electricity_source_code = lpda.laptop_electricity_source_value WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
+													//$i=1;
 												    while($lapinfos = mysql_fetch_array($lapinfo))
-														{ ?>
-                                                    <tr>
-                                                        <td><?php echo $j++;?></td>
-                                                        <td><?php echo $cc_org_code=$lapinfos['org_code'];?></td>
-														<?php 
-														if($cc_org_code){ 
-														$cc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
-														LEFT JOIN total_manpower_imported_sanctioned_post_copy as total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
-														where old_tbl_staff_organization.org_code='$cc_org_code' AND total_manpower.designation_code='11960'");
-
-														$cc_staff_rows = mysql_fetch_assoc($cc_staff);
-														$staff_name=$cc_staff_rows['staff_name'];
-														$contact_no =$cc_staff_rows['contact_no'];
-														}
-														
-														
+														{ 
+														if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
 														?>
-                                                        <td><a href="addlaptopinfo.php?org_code=<?php echo $lapinfos['org_code'];?>"><?php echo $lapinfos['org_name'];?></a></td>
-														<td><?php if($staff_name){echo $staff_name;}else echo 'N/A';?></td>
-														<td><?php  if($contact_no){echo $contact_no;}else echo 'N/A';?></td>
-														
-														<td nowrap="nowrap"><a href="addlaptopinfo.php?org_code=<?php echo $lapinfos['org_code'];?>">Update</a></td>
+                                                    <tr>
+                                                        <td><?php echo $lapinfos['id'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_cc_name'];?></td>
+                                                        <td><?php echo $lapinfos['union_name'];?></td>
+														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
+														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
+														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>
+														<td><?php echo $lapinfos['electricity_source_name'];?></td>
+														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
+														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
+														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
+														<td nowrap="nowrap"><a href=""> Details</a></td>
                                                     </tr>
-													<?php 
-													} }?>
+													<?php }} ?>
                                                    
                                                     </tbody>
-</table>
-
-
-<table width="400" cellspacing="2" cellpadding="2" align="center">
-<tbody>
-<tr>
-<td align="center">
- 
-<?php
- 
-if(isset($page))
- 
-{
-
-//$lapinfo=mysql_query("SELECT * FROM organization where org_type_code='1039' AND upazila_id='$upazila_id'");
-													
-$result = mysql_query("SELECT COUNT(*) AS Total FROM organization where org_type_code='1039' AND upazila_id='$upazila_id'");
- 
-$rows = mysql_num_rows($result);
- 
-if($rows)
- 
-{
- 
-$rs = mysql_fetch_assoc($result);
- 
-$total = $rs["Total"];
- 
-}
- 
-$totalPages = ceil($total / $perpage);
- 
-if($page <=1 ){
- 
-echo "<span id='page_links' style='font-weight: bold;'>Prev</span>";
- 
-}
- 
-else
- 
-{
- 
-$j = $page - 1;
- 
-echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>< Prev</a></span>";
- 
-}
- 
-for($i=1; $i <= $totalPages; $i++)
- 
-{
- 
-if($i<>$page)
- 
-{
- 
-echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$i'>$i</a></span>";
- 
-}
- 
-else
- 
-{
- 
-echo "<span id='page_links' style='font-weight: bold;'>$i</span>";
- 
-}
- 
-}
- 
-if($page == $totalPages )
- 
-{
- 
-echo "<span id='page_links' style='font-weight: bold;'>Next ></span>";
- 
-}
- 
-else
- 
-{
- 
-$j = $page + 1;
- 
-echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>";
- 
-}
- 
-}
- 
-?></td>
-<td></td>
-</tr>
-</tbody>
 </table>
 
 <table class="table table-bordered">
@@ -600,7 +405,7 @@ echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>
                                                     <thead>
 													<tr>
 													<th colspan="11">
-													List of CHCP with received Laptop
+													List of CHCP without Laptop
 													</th>
 													</tr>
                                                     <tr>
@@ -615,42 +420,39 @@ echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>
 														<th nowrap="nowrap">IMEI No.</th>
 														<th nowrap="nowrap">SIM No.</th>
 														<th nowrap="nowrap">Laptop Sl No.</th>
+														<th>Action</th>
                                                     </tr>
                                                     </thead>
 
                                                     <tbody>
 													<?php
 
-														$org_code = $_SESSION['org_code'] ;
-														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,lpda.laptop_electricity_source_value,lpda.laptop_union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,lpda.laptop_serial_no FROM lpda_laptop AS lpda WHERE lpda.laptop_updated_org_code='".$org_code."'");
-													//$i=1;
+														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,s.electricity_source_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN admin_union AS u ON u.union_bbs_code = lpda.laptop_union_name INNER JOIN org_source_of_electricity_main AS s ON s.electricity_source_code = lpda.laptop_electricity_source_value WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
+														//$i=1;
 												    while($lapinfos = mysql_fetch_array($lapinfo))
 														{ 
-														//if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
+														if(empty($lapinfos['laptop_imei_no'])|| empty($lapinfos['laptop_sim_no'])||empty($lapinfos['laptop_serial_no'])){
 														?>
                                                     <tr>
                                                         <td><?php echo $lapinfos['id'];?></td>
                                                         <td><?php echo $lapinfos['laptop_org_code'];?></td>
-                                                        <td><a href="ccreport.php?ccid=<?php echo $lapinfos['id'];?>"><?php echo $lapinfos['laptop_cc_name'];?></a></td>
-                                                        <td><?php echo $lapinfos['laptop_union_name'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_cc_name'];?></td>
+                                                        <td><?php echo $lapinfos['union_name'];?></td>
 														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
 														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
 														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>
-														<td><?php echo $lapinfos['laptop_electricity_source_value'];?></td>
+														<td><?php echo $lapinfos['electricity_source_name'];?></td>
 														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
 														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
 														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
-                                                    </tr>
-													<?php // }
-													} ?>
+														<td nowrap="nowrap"><a href="editlaptopinfo.php?id=<?php echo $lapinfos['id'];?>">Edit</a>
+                                                         | <a href="deletelaptop.php?id=<?php echo $lapinfos['id'];?>">Delete</a></td>
+                                               
+												   </tr>
+													<?php }} ?>
                                                    
                                                     </tbody>
 </table>
-<!--
-<table class="table table-bordered">
--->
-
-													
 </div>
                                 </div>
 
@@ -696,9 +498,65 @@ echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>
 <script type="text/javascript" src="js/header6654.js?v1"></script>
 <script type="text/javascript" src="js/sidebar.js"></script>
 
+<script type="text/javascript">
 
+			
+    $(function() {
 	
+	// load district
+            $('#laptop_org_code').change(function() {
+                $("#loading_content").show();
+                var org_code = $('#laptop_org_code').val();
+                $.ajax({
+                    type: "POST",
+                    url: 'get/get_cc_list.php',
+                    data: {org_code: org_code},
+                    dataType: 'json',
+                    success: function(data)
+                    {
+                       $("#loading_content").hide();
+                        var laptop_cc_name = document.getElementById('laptop_cc_name');
+                        laptop_cc_name.options.length = 0;
+                        for (var i = 0; i < data.length; i++) {
+                            var d = data[i];
+                            laptop_cc_name.options.add(new Option(d.text, d.value));
+                        }
+                    }
+                });
+            });
+
+		$('#laptop_electricity_source_value').change(function() {
+										  var elec_source = $('#laptop_electricity_source_value').find('option:selected').text();
+											$("#laptop_elect_source").val(elec_source);
+										 });
+			
+
+        jQuery("#validation").validationEngine();
+        $("#phone").mask("(999) 9999999999");
+        $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+
+    });
+
+</script>
+	<?php 
+	                //echo "<pre>";
+					//print_r($_POST);   
+	               
+				    if($_POST['submit']){			
+					$exception_field=array('submit','param');
+					$str=createMySqlInsertString($_POST, $exception_field);
+					/******************************************************/	
+					$str_k=$str['k'];
+					$str_v=$str['v'];
+					$sql="INSERT INTO lpda_laptop($str_k) values ($str_v)";
+					mysql_query($sql);
+					print "<script>";
+					print " self.location=laptopinfo.php'"; // Comment this line if you don't want to redirect
+					print "</script>";
+	}
+	?>
 					
 </body>
 
+<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>

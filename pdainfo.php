@@ -1,9 +1,12 @@
-<?php session_start(); ?>
+<?php session_start(); 
+error_reporting(E_ALL);
+ini_set('display_errors','On');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <?php 
 require_once 'include/db_connection.php'; 
-include('include/inc.functions.generic.php');
+//include('include/inc.functions.generic.php');
 if(empty($_SESSION['loginid']))
 {
 	print "<script>";
@@ -14,8 +17,8 @@ if(empty($_SESSION['loginid']))
 
 $org_code = $_SESSION['org_code'] ;
 
-$org = mysql_query("SELECT lpda_organization.org_code,lpda_organization.org_name,lpda_organization.upazila_id
-FROM lpda_organization where lpda_organization.org_code='".$org_code."'");
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_id
+FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
 $upazila_id=$rows['upazila_id'];
@@ -91,8 +94,7 @@ $org_name=$rows['org_name'];
 
                     <a href="#" class="utopia-logo"><img src="img/gov_logo.gif" alt="Utopia" height="50" width="80" /></a>
                     <span style="font-size:24px;font-weight:bold;">Laptop/PDA Distribution System
-					 - <?php 
-						echo $org_name;		?>
+					 - <?php echo $org_name;?>
 					</span>
                     <div class="header-right">
 
@@ -184,7 +186,7 @@ $org_name=$rows['org_name'];
                                         <section class="utopia-widget">
                                             <div class="utopia-widget-title">
                                                 <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
-                                                <span>Name of HA/HI/AHI & Tablet/PDA Informtion &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="pdarequisition.php">Requisition Form</a></span>
+                                                <span>Name of HA/HI/AHI & Tablet/PDA Informtion &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="pdaprint.php">Print</a></span>
                                             </div>
 
                                             <div class="utopia-widget-content">
@@ -220,8 +222,7 @@ $org_name=$rows['org_name'];
                                                     <tbody>
 													<?php
 													
-													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
+													$pdainfo=mysql_query("SELECT * FROM lpda_pda WHERE pda_org_code=$org_code ORDER BY pda_person_type desc");
 													$i=1;
 												    while($pdainfos = mysql_fetch_array($pdainfo))
 														{  
@@ -230,7 +231,7 @@ FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_un
                                                      <tr>
                                                        
                                                         <td><?php echo $pdainfos['id'];?></td>
-                                                        <td><?php echo $pdainfos['union_name'];?></td>
+                                                        <td><?php echo $pdainfos['pda_union_name'];?></td>
                                                         <td><?php echo $pdainfos['pda_ward_no'];?></td>
 														<td><?php echo $pdainfos['pda_person_type'];?></td>
 														<td><?php echo $pdainfos['pda_person_name'];?></td>
@@ -243,123 +244,6 @@ FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_un
                                                     </tbody>
                                                 </table>
 												
-												   <table class="table table-bordered">
-
-                                                    <colgroup>
-                                                        <col class="utopia-col-0">
-                                                        <col class="utopia-col-1">
-                                                        <col class="utopia-col-0">
-                                                        <col class="utopia-col-1">
-                                                        <col class="utopia-col-0">
-                                                    </colgroup>
-
-                                                    <thead>
-													<tr>
-													<th colspan="11">
-													List of person without PDA
-													</th>
-													</tr>
-                                                    <tr>
-                                                        <th>Sl</th>
-                                                        <th>Union BBS Code</th>
-                                                        <th>Ward no</th>
-														<th>Person Type</th>
-														<th>Name of the person</th>
-														<th>Mobile No.</th>
-														<th>IMEI No.(PDA)</th>
-														<th>SIM No.</th>
-                                                    </tr>
-                                                    </thead>
-												
-                                                    <tbody>
-													<?php
-													
-													$pdainfo=mysql_query("SELECT pda.id,pda.pda_org_code,u.union_name,pda.pda_ward_no,pda.pda_person_type,pda.pda_person_name,pda.pda_person_mobile_no,pda.pda_imei_no,pda.pda_sim_no
-FROM lpda_pda AS pda INNER JOIN lpda_union AS u ON u.union_bbs_code = pda.pda_union_name WHERE pda.pda_upazila_id=u.old_upazila_id AND pda.pda_org_code='".$org_code."' GROUP BY pda.pda_union_name");
-													$i=1;
-												    while($pdainfos = mysql_fetch_array($pdainfo))
-														{  
-														if(empty($pdainfos['pda_imei_no'])||empty($pdainfos['pda_sim_no'])){
-												        ?>
-                                                     <tr>
-                                                       
-                                                        <td><?php echo $pdainfos['id'];?></td>
-                                                        <td><?php echo $pdainfos['union_name'];?></td>
-                                                        <td><?php echo $pdainfos['pda_ward_no'];?></td>
-														<td><?php echo $pdainfos['pda_person_type'];?></td>
-														<td><?php echo $pdainfos['pda_person_name'];?></td>
-														<td><?php echo $pdainfos['pda_person_mobile_no'];?></td>
-														<td><?php echo $pdainfos['pda_imei_no'];?></td>
-														<td><?php echo $pdainfos['pda_sim_no'];?></td>
-                                                    </tr>
-
-                                                   <?php }} ?>
-                                                    </tbody>
-                                                </table>
-
-                                                <div class="utopia-table-action">
-                                                    <div class="btn-group">
-                                                        <a href="#" class="btn"><i class="icon-cog"></i> Actions</a>
-                                                        <a href="#" data-toggle="dropdown" class="btn dropdown-toggle"><span class="caret"></span></a>
-                                                        <ul class="dropdown-menu">
-                                                            <li><a href="#"><i class="icon-eye-open"></i> View</a></li>
-                                                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                                                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </section>
-
-                                    </div>
-
-                                </div>
-
-								
-								<!--
-                                <div class="row-fluid">
-                                    <div class="span12">
-
-                                        <section class="utopia-widget">
-                                            <div class="utopia-widget-title">
-                                                <img src="img/icons/satellite.png" class="utopia-widget-icon">
-                                                <span>maps with route directions</span>
-                                            </div>
-
-                                            <div class="utopia-widget-content">
-                                                <div class="utopia-map-wrapper">
-                                                    <div id="utopia-google-map-5" class="utopia-map"></div>
-                                                    <div class="utopia-map-details">
-                                                        <div class="utopia-map-description">
-                                                            <p>
-                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et tempus elit.
-                                                                Duis pharetra blandit risus, a condimentum ipsum ultricies nec. Integer accumsan
-                                                                neque nec augue dictum sit amet dignissim tortor scelerisque.
-                                                            </p>
-                                                        </div>
-                                                        <div class="utopia-map-action">
-                                                            <img src="img/icons2/sun.png"/>
-                                                            <img src="img/icons2/world.png"/>
-                                                            <img src="img/icons2/cloud.png"/>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </section>
-
-                                    </div>
-                                </div>
-                              -->
-
-                                <!-- image gallery  Starts-->
-
-                               
-                                <!-- image gallery  ends-->
-
-
-                            </div><!-- Mid panel -->
 <!--
                             <div class="span3">
 

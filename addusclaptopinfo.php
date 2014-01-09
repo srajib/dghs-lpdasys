@@ -7,6 +7,33 @@ ini_set('display_errors','On');
 <?php 
 require_once 'include/db_connection.php'; 
 include('include/inc.functions.generic.php');
+
+    $msg='';
+    
+	if(!empty($_POST)){
+	$laptop_org_code=$_POST['laptop_org_code'];
+    $laptop_usc_name=$_POST['laptop_usc_name'];
+	$laptop_union_name=$_POST['laptop_union_name']; 
+	$laptop_ward_no=$_POST['laptop_ward_no']; 
+	$laptop_person_name=$_POST['laptop_contact_person']; 
+	$laptop_staff_id=$_POST['laptop_staff_id'];
+	$laptop_person_mobile_no=$_POST['laptop_person_mobile_no']; 
+	$laptop_imei_no=$_POST['laptop_imei_no']; 
+	$laptop_sim_no=$_POST['laptop_sim_no']; 
+    $laptop_serial_no=$_POST['laptop_serial_no']; 
+	$laptop_upazila_code=$_POST['laptop_upazila_code']; 
+	$laptop_updated_datetime=$_POST['laptop_updated_datetime'];
+	$laptop_updated_by=$_POST['laptop_updated_by'];
+	$laptop_active=$_POST['laptop_active'];
+    $laptop_updated_org_code=$_POST['laptop_updated_org_code'];
+    $laptop_elect_source=$_POST['laptop_elect_source'];
+	
+	$sql="INSERT INTO `lpda_laptop_usc` (`id`,`laptop_org_code`,`laptop_usc_name`,`laptop_union_name`,`laptop_ward_no`,`laptop_staff_id`,`laptop_contact_person`,`laptop_contact_person_mobile`,`laptop_electricity_source_value`,`laptop_imei_no`,`laptop_sim_no`,`laptop_serial_no`,`laptop_upazila_code`,`laptop_updated_by`,`laptop_updated_org_code`) VALUES ('','$laptop_org_code','$laptop_usc_name','$laptop_union_name','$laptop_ward_no','$laptop_staff_id','$laptop_person_name','$laptop_person_mobile_no','$laptop_elect_source','$laptop_imei_no','$laptop_sim_no','$laptop_serial_no','$laptop_upazila_code','$laptop_updated_by','$laptop_updated_org_code')";
+	mysql_query($sql);
+    
+	$msg=2;
+	}	             
+
 if(empty($_SESSION['loginid']))
 {
 	print "<script>";
@@ -218,18 +245,20 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 				  $electricity_source='N/A';
 				
 				if($usc_org_code){ 
-				$usc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+				$usc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
 				LEFT JOIN total_manpower_imported_sanctioned_post_copy as total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
 				where old_tbl_staff_organization.org_code='$usc_org_code' AND total_manpower.designation_code='11226'");
 
 				$usc_staff_rows = mysql_fetch_assoc($usc_staff);
 				$staff_name=$usc_staff_rows['staff_name'];
+                $staff_id=$usc_staff_rows['staff_id'];
 				$contact_no =$usc_staff_rows['contact_no'];
 				}
 				else
 				{
 				$staff_name='N/A';
 				$contact_no ='N/A';
+                $staff_id   ='N/A';
 				}
 				}else
 				{
@@ -239,6 +268,7 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 				$usc_ward_code='N/A';
 				$source_of_electricity_main_code='N/A';
 				$staff_name='N/A';
+                $staff_id    ='N/A';
 				$contact_no ='N/A';
 				$electricity_source='N/A';
 				}
@@ -255,6 +285,26 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
                                 <div class="row-fluid">
                                         <section class="utopia-widget">
 										<form name="" method="post" action="addusclaptopinfo.php" class="formular" id="form3">
+										 <?php 
+										 $msg_usc='';
+										 if(!empty($_GET['org_code'])){
+										 $usc_org_code=mysql_real_escape_string($_GET['org_code']);
+										 $usclapinfo=mysql_query("SELECT id FROM lpda_laptop_usc AS lpda WHERE lpda.laptop_org_code='".$usc_org_code."'");
+										 $rows = mysql_num_rows($usclapinfo);
+										 if($rows>0){ 
+										 $msg_usc=1;
+										 }
+										 }
+										?>
+										 
+										<?php if(!empty($msg)){ 	
+												echo "<span style='color:green;font-weight:bold;margin-left:5px;>  Your data has been inserted succssfully into our system.</span>";
+												}  
+										?>
+											<?php if(!empty($msg_usc)){ 	
+												echo "<span style='color:red;font-weight:bold;margin-left:5px;'>  This Union sub center already taken laptop. So, this union sub center can not take any laptop .</span>";
+												}  
+										?>
 										<table class="table">
 										<tr>
 										<td>
@@ -272,7 +322,7 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										</td>
 										<td colspan="2">
 										   <?php if($usc_org_name){echo $usc_org_name;}else{echo 'N/A';}?>
-										 <?php if($usc_org_name){?><input type='hidden' name='laptop_org_name' value='<?php echo $usc_org_name;?>'><?php } ?>
+										 <?php if($usc_org_name){?><input type='hidden' name='laptop_usc_name' value='<?php echo $usc_org_name;?>'><?php } ?>
 									
 										 <!--<a href="addusc.php">If you want to add USC, please click here. </a>-->
 										</td>
@@ -289,7 +339,9 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 											?>
 										 <?php if($usc_union_name){?><input type='hidden' name='laptop_union_name' value='<?php echo $usc_union_name;?>'><?php }else{ ?>	
 										<input type='hidden' name='laptop_union_name' value='<?php echo 'N/A';?>'> <?php } ?>
-										
+										 <?php if($staff_id){?><input type='hidden' name='laptop_staff_id' value='<?php echo $staff_id;?>'><?php }else{ ?>	
+										<input type='hidden' name='laptop_staff_id' value='<?php echo 'N/A';?>'> <?php } ?>
+                                       
 										</td>
 										</tr>
 										<tr>
@@ -325,8 +377,8 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 										</td>
 										<td>
 										<span style="padding-top:2px;"><?php if($contact_no){ echo $contact_no;} else {echo 'N/A';}?></span>
-											<?php if($contact_no){?><input type='hidden' name='laptop_contact_person_mobile' value='<?php echo $contact_no;?>'><?php }else{ ?>	
-										<input type='hidden' name='laptop_contact_person_mobile' value='<?php echo 'N/A';?>'> <?php } ?>
+											<?php if($contact_no){?><input type='hidden' name='laptop_person_mobile_no' value='<?php echo $contact_no;?>'><?php }else{ ?>	
+										<input type='hidden' name='laptop_person_mobile_no' value='<?php echo 'N/A';?>'> <?php } ?>
 									     </td>
 										<td>
 										SIM No : <input name="laptop_sim_no" type="text">
@@ -351,13 +403,14 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 									
 										<tr>
 										<td colspan="2">
-										 <input name="laptop_upazila_id" type="hidden" value="<?php echo  $upazila_thana_code; ?>">
-										  
+										  <input name="laptop_upazila_code" type="hidden" value="<?php echo  $upazila_thana_code; ?>">
 										  <input name="laptop_updated_datetime" type="hidden" value="<?php echo date('Y-m-d h:m:i');  ?>">
-										   <input name="laptop_updated_by" type="hidden" value="<?php echo $org_name; ?>">
-										   <input name="laptop_updated_org_code" type="hidden" value="<?php echo $org_code; ?>">
-										   <input name="laptop_active" type="hidden" value="1">
-										<input type="submit" value="Submit" name="submit">
+										  <input name="laptop_updated_by" type="hidden" value="<?php echo $org_name; ?>">
+										  <input name="laptop_updated_org_code" type="hidden" value="<?php echo $org_code; ?>">
+										  <input name="laptop_active" type="hidden" value="1">
+										 <?php if(!empty($msg_usc)){} else { ?>
+										    <input type="submit" value="Submit" name="submit">
+										 <?php } ?>
 										</td>
 										
 									<td>
@@ -421,13 +474,14 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
                                                         <td><a href="addusclaptopinfo.php?org_code=<?php echo $lapinfos['org_code'];?>"><?php echo $lapinfos['org_name'];?></a></td>
 														<?php 	
 														if($usc_org_code){ 
-														$usc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+														$usc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
 														LEFT JOIN total_manpower_imported_sanctioned_post_copy as total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
 														where old_tbl_staff_organization.org_code='$usc_org_code' AND total_manpower.designation_code='11226'");
 
 														$usc_staff_rows = mysql_fetch_assoc($usc_staff);
 														$staff_name=$usc_staff_rows['staff_name'];
 														$contact_no =$usc_staff_rows['contact_no'];
+                                                        $laptop_staff_id=$usc_staff_rows['staff_id'];
 														} 
 														?> 
 														
@@ -495,7 +549,7 @@ if($i<>$page)
  
 {
  
-echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$i'>$i</a></span>";
+echo "<span><a id='page_a_link' href='addusclaptopinfo.php?page=$i'>$i</a></span>";
  
 }
  
@@ -523,7 +577,7 @@ else
  
 $j = $page + 1;
  
-echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>";
+echo "<span><a id='page_a_link' href='addusclaptopinfo.php?page=$j'>Next</a></span>";
  
 }
  
@@ -534,6 +588,59 @@ echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>
 </tr>
 </tbody>
 </table>
+
+<table class="table table-bordered">
+
+                                                    <thead>
+													<tr>
+													<th colspan="11">
+													List of USC with received Laptop
+													</th>
+													</tr>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th nowrap="nowrap">Org code</th>
+														<th nowrap="nowrap">Name of Organization</th>
+														<th nowrap="nowrap">Union</th>
+                                                        <th nowrap="nowrap">New Ward no</th>
+														<th nowrap="nowrap">Person Name</th>
+														<th nowrap="nowrap">Contact person Mobile No.</th>
+														<th nowrap="nowrap">Source of Electricity</th>
+														<th nowrap="nowrap">IMEI No.</th>
+														<th nowrap="nowrap">SIM No.</th>
+														<th nowrap="nowrap">Laptop Sl No.</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody>
+													<?php
+
+
+													$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_usc_name,lpda.laptop_electricity_source_value,lpda.laptop_union_name,lpda.laptop_ward_no,lpda.laptop_contact_person,lpda.laptop_contact_person_mobile,lpda.laptop_imei_no,lpda.laptop_sim_no,lpda.laptop_serial_no FROM lpda_laptop_usc AS lpda WHERE lpda.laptop_updated_org_code='".$org_code."'");
+													
+												    while($lapinfos = mysql_fetch_array($lapinfo))
+														{ 
+														if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
+														?>
+                                                    <tr>
+                                                        <td><?php echo $lapinfos['id'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
+                                                        <td><a href="uscreport.php?uid=<?php echo $lapinfos['id'];?>"><?php echo $lapinfos['laptop_usc_name'];?></a></td>
+                                                        <td><?php echo $lapinfos['laptop_union_name'];?></td>
+														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
+														<td><?php echo $lapinfos['laptop_contact_person'];?></td>
+														<td><?php echo $lapinfos['laptop_contact_person_mobile'];?></td>
+														<td><?php echo $lapinfos['laptop_electricity_source_value'];?></td>
+														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
+														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
+														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
+                                                    </tr>
+													<?php }} ?>
+                                                   
+                                                    </tbody>
+</table>
+
+
 </div>
                                 </div>
 
@@ -587,25 +694,7 @@ echo "<span><a id='page_a_link' href='addlaptopinfo.php?page=$j'>Next</a></span>
 <script type="text/javascript" src="js/sidebar.js"></script>
 
 
-	<?php 
-	                //echo "<pre>";
-					//print_r($_POST);   
-	               
-				    if($_POST['submit']){			
-					$exception_field=array('submit','param');
-					$str=createMySqlInsertString($_POST, $exception_field);
-					/******************************************************/	
-					$str_k=$str['k'];
-					$str_v=$str['v'];
-					$sql="INSERT INTO lpda_laptop_usc($str_k) values ($str_v)";
-					mysql_query($sql);
-					print "<script>";
-					print " self.location=addusclaptopinfo.php'"; // Comment this line if you don't want to redirect
-					print "</script>";
-	}
-	?>
+	
 					
 </body>
-
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>

@@ -1,14 +1,14 @@
 <?php
   include('configuration.php');
-  $org_code = $_POST['org_code'];
+ $org_code = $_POST['org_code'];
 
-$sql = "SELECT organization.org_code,
-            organization.org_name,
-            organization.organization_id
+$sql = "SELECT lpda_organization.org_code,
+            lpda_organization.org_name,
+            lpda_organization.organization_id
         FROM
-            organization
+            lpda_organization
         WHERE
-           organization.org_code='$org_code'";
+           lpda_organization.org_code='$org_code'";
 $result = mysql_query($sql) or die(mysql_error() . "<br /><br />Code:<b>get_cc_list:1</b><br /><br /><b>Query:</b><br />___<br />$sql<br />");
 
 $data = array();

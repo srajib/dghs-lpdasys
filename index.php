@@ -2,7 +2,9 @@
 session_start();
 if(!empty($_SESSION['loginid']) && $_SESSION['loginid']=='user')
 { 
-	   header("location:dashboard.php");
+	 	print "<script>";
+		print " self.location='dashboard.php'"; // Comment this line if you don't want to redirect
+		print "</script>";
 		
 }
 ?>
@@ -70,13 +72,11 @@ if(isset($_POST['submit']))
 	
 		/*$ip = $_SERVER['REMOTE_ADDR'];
 		$login = time();*/
-		/*if($_SESSION['loginid'] == 'admin')
+		if(!empty($_SESSION['loginid']) && $_SESSION['loginid']=='user')
 		{
-			echo "<meta http-equiv='refresh' content='2; url=admin.php'>";
-		}else{
 			echo "<meta http-equiv='refresh' content='2; url=dashboard.php'>";
 		}
-			*/
+		
 	}
 	else
 	{
@@ -123,11 +123,11 @@ if(isset($_POST['submit']))
                             <ul class="utopia-login-action">
                                 <li>
                                     <input type="submit" name="submit" class="btn span4" value="Login">
-                                    <div class="pull-right"><input type="checkbox"> Remember me!</div>
+                                   <!-- <div class="pull-right"><input type="checkbox"> Remember me!</div>-->
                                 </li>
                             </ul>
 
-                            <label><a href="#">Can't access your account?</a></label>
+                            <!--<label><a href="#">Can't access your account?</a></label>-->
                         </form>
                     </div>
                 </div>

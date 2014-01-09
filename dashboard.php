@@ -1,12 +1,14 @@
 <?php session_start();
 //error_reporting(0);
 require_once 'include/db_connection.php'; 
-
+/*
 if(!empty($_SESSION['loginid']) && $_SESSION['loginid']=='user')
 { 
-	  
+		print "<script>";
+		print " self.location='dashboard.php'"; // Comment this line if you don't want to redirect
+		print "</script>";  
 		
-
+}*/
 	?>
 <!DOCTYPE html>
 <html lang="en">
@@ -547,8 +549,3 @@ $email=$_SESSION['username'];?></span>
 
 <!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>
-<?php }else{
-
-		 header("location:index.php");
-		
-} ?>

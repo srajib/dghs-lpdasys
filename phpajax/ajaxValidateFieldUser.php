@@ -14,7 +14,6 @@ $arrayToJs = array();
 $arrayToJs[0] = $validateId;
 
 $sql= mysql_query("SELECT lpda_laptop.id from lpda_laptop where laptop_org_code='".$validateValue."'");
-
 $num= mysql_num_rows($sql);
 
 if($num != 1){ // validate??

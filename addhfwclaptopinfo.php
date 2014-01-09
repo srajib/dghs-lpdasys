@@ -3,7 +3,7 @@
 <html lang="en">
 <?php 
 require_once 'include/db_connection.php'; 
-include('include/inc.functions.generic.php');
+//include('include/inc.functions.generic.php');
 if(empty($_SESSION['loginid']))
 {
 	print "<script>";
@@ -19,6 +19,31 @@ FROM organization where organization.org_code='".$org_code."'");
 $rows = mysql_fetch_assoc($org);
 $upazila_thana_code=$rows['upazila_thana_code'];
 $org_name=$rows['org_name'];
+
+	if(!empty($_POST)){
+    $laptop_org_code=$_POST['laptop_org_code'];
+    $laptop_hfwc_name=$_POST['laptop_org_name'];
+	$laptop_union_name=$_POST['laptop_union_name']; 
+	$laptop_ward_no=$_POST['laptop_ward_no']; 
+	$laptop_person_name=$_POST['laptop_contact_person']; 
+	$laptop_staff_id=$_POST['laptop_staff_id'];
+	$laptop_person_mobile_no=$_POST['laptop_contact_person_mobile']; 
+	$laptop_imei_no=$_POST['laptop_imei_no']; 
+	$laptop_sim_no=$_POST['laptop_sim_no']; 
+    $laptop_serial_no=$_POST['laptop_serial_no']; 
+	$laptop_upazila_code=$_POST['laptop_upazila_code']; 
+	$laptop_updated_datetime=$_POST['laptop_updated_datetime'];
+	$laptop_updated_by=$_POST['laptop_updated_by'];
+	$laptop_active=$_POST['laptop_active'];
+    $laptop_updated_org_code=$_POST['laptop_updated_org_code'];
+    $laptop_elect_source=$_POST['laptop_elect_source'];
+	
+	$sql="INSERT INTO `lpda_laptop_hfwc` (`id`,`laptop_org_code`,`laptop_hfwc_name`,`laptop_union_name`,`laptop_ward_no`,`laptop_staff_id`,`laptop_contact_person`,`laptop_contact_person_mobile`,`laptop_electricity_source_value`,`laptop_imei_no`,`laptop_sim_no`,`laptop_serial_no`,`laptop_upazila_code`,`laptop_updated_by`,`laptop_updated_org_code`) VALUES ('','$laptop_org_code','$laptop_hfwc_name','$laptop_union_name','$laptop_ward_no','$laptop_staff_id','$laptop_person_name','$laptop_person_mobile_no','$laptop_elect_source','$laptop_imei_no','$laptop_sim_no','$laptop_serial_no','$laptop_upazila_code','$laptop_updated_by','$laptop_updated_org_code')";
+	mysql_query($sql);
+    
+    //echo $sql;
+	$msg=2;
+	}
 
 ?>
 <head>
@@ -41,10 +66,12 @@ $org_name=$rows['org_name'];
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.cookie.js"></script>
-		<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
+	<!--
+    <link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
 	
 	<script src="js/languages/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8">
 	</script>
+    -->
 		<style>
 		 #page_links
 		 {
@@ -251,6 +278,28 @@ $email=$_SESSION['username'];?></span>
                                 <div class="row-fluid">
                                         <section class="utopia-widget">
 										<form name="" method="post" action="addhfwclaptopinfo.php" class="formular" id="form3">
+										
+										<?php 
+										 $msg_hfwc='';
+										 if(!empty($_GET['org_code'])){
+										 $hfwc_org_code=mysql_real_escape_string($_GET['org_code']);
+										 $hfwclapinfo=mysql_query("SELECT id FROM lpda_laptop_hfwc AS lpda WHERE lpda.laptop_org_code='".$hfwc_org_code."'");
+										 $rows = mysql_num_rows($hfwclapinfo);
+										 if($rows>0){ 
+										 $msg_hfwc=1;
+										 }
+										 }
+										?>
+										 
+										<?php if(!empty($msg)){ 	
+												echo "<span style='color:green;font-weight:bold;margin-left:5px;>  Your data has been inserted succssfully into our system.</span>";
+												}  
+										?>
+											<?php if(!empty($msg_hfwc)){ 	
+												echo "<span style='color:red;font-weight:bold;margin-left:5px;'>  This UH&FWC already taken laptop. So, this UH&FWC can not take any laptop .</span>";
+												}  
+										?>
+										
 										<table class="table">
 										<tr>
 										<td>
@@ -350,13 +399,15 @@ $email=$_SESSION['username'];?></span>
 									
 										<tr>
 										<td colspan="2">
-										 <input name="laptop_upazila_id" type="hidden" value="<?php echo  $upazila_thana_code; ?>">
+										 <input name="laptop_upazila_code" type="hidden" value="<?php echo  $upazila_thana_code; ?>">
 										  
 										  <input name="laptop_updated_datetime" type="hidden" value="<?php echo date('Y-m-d h:m:i');  ?>">
 										   <input name="laptop_updated_by" type="hidden" value="<?php echo $org_name; ?>">
 										   <input name="laptop_updated_org_code" type="hidden" value="<?php echo $org_code; ?>">
 										   <input name="laptop_active" type="hidden" value="1">
-										<input type="submit" value="Submit" name="submit">
+										  <?php if(!empty($msg_hfwc)){} else { ?>
+										    <input type="submit" value="Submit" name="submit">
+										 <?php } ?>
 										</td>
 										
 									<td>
@@ -535,7 +586,56 @@ echo "<span><a id='page_a_link' href='addhfwclaptopinfo.php?page=$j'>Next</a></s
 </tbody>
 </table>
 
+<table class="table table-bordered">
 
+                                                    <thead>
+													<tr>
+													<th colspan="11">
+													List of H&FWC with received Laptop
+													</th>
+													</tr>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th nowrap="nowrap">Org code</th>
+														<th nowrap="nowrap">Name of Organization</th>
+														<th nowrap="nowrap">Union</th>
+                                                        <th nowrap="nowrap">New Ward no</th>
+														<th nowrap="nowrap">Person Name</th>
+														<th nowrap="nowrap">Contact person Mobile No.</th>
+														<th nowrap="nowrap">Source of Electricity</th>
+														<th nowrap="nowrap">IMEI No.</th>
+														<th nowrap="nowrap">SIM No.</th>
+														<th nowrap="nowrap">Laptop Sl No.</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody>
+													<?php
+
+
+													$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_hfwc_name,lpda.laptop_electricity_source_value,lpda.laptop_union_name,lpda.laptop_ward_no,lpda.laptop_contact_person,lpda.laptop_contact_person_mobile,lpda.laptop_imei_no,lpda.laptop_sim_no,lpda.laptop_serial_no FROM lpda_laptop_hfwc AS lpda WHERE lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_hfwc_name");
+													
+												    while($lapinfos = mysql_fetch_array($lapinfo))
+														{ 
+														if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
+														?>
+                                                    <tr>
+                                                        <td><?php echo $lapinfos['id'];?></td>
+                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
+                                                        <td><a href="hfwcreport.php?uid=<?php echo $lapinfos['id'];?>"><?php echo $lapinfos['laptop_hfwc_name'];?></a></td>
+                                                        <td><?php echo $lapinfos['laptop_union_name'];?></td>
+														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
+														<td><?php echo $lapinfos['laptop_contact_person'];?></td>
+														<td><?php echo $lapinfos['laptop_contact_person_mobile'];?></td>
+														<td><?php echo $lapinfos['laptop_electricity_source_value'];?></td>
+														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
+														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
+														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
+                                                    </tr>
+													<?php }} ?>
+                                                   
+                                                    </tbody>
+</table>
 </div>
                                 </div>
 
@@ -629,23 +729,7 @@ echo "<span><a id='page_a_link' href='addhfwclaptopinfo.php?page=$j'>Next</a></s
     });
 
 </script>
-	<?php 
-	                //echo "<pre>";
-					//print_r($_POST);   
-	               
-				    if($_POST['submit']){			
-					$exception_field=array('submit','param');
-					$str=createMySqlInsertString($_POST, $exception_field);
-					/******************************************************/	
-					$str_k=$str['k'];
-					$str_v=$str['v'];
-					$sql="INSERT INTO lpda_laptop_hfwc($str_k) values ($str_v)";
-					mysql_query($sql);
-					print "<script>";
-					print " self.location=addhfwclaptopinfo.php'"; // Comment this line if you don't want to redirect
-					print "</script>";
-	}
-	?>
+
 					
 </body>
 </html>

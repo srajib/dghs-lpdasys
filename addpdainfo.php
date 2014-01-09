@@ -217,11 +217,11 @@ $email=$_SESSION['username'];?></span>
                                 <div class="row-fluid">
 
 									   	 <?php 
-											if(!empty($_GET['id']))
+											if(!empty($_GET['staff_id']))
 											{
-											 $sanctioned_post_id=mysql_real_escape_string($_GET['id']);
+											 $staff_id=mysql_real_escape_string($_GET['staff_id']);
 											 $pda_org = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,old_tbl_staff_organization.contact_no,total_manpower.union,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
-	LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id WHERE total_manpower.id='$sanctioned_post_id'");				
+	LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id WHERE old_tbl_staff_organization.staff_id='$staff_id'");				
 											$uscrows = mysql_fetch_assoc($pda_org);
 											$union_name=$uscrows['union'];
 											$designation=$uscrows['designation'];
@@ -241,10 +241,28 @@ $email=$_SESSION['username'];?></span>
 									   
                                         <section class="utopia-widget">
 										<form name="" method="post" action="addpdainfo.php">
+										
+										<?php 
+										 $msg_pda='';
+										 if(!empty($_GET['staff_id'])){
+										 $staff_code=mysql_real_escape_string($_GET['staff_id']);
+										 $pdainfo=mysql_query("SELECT * FROM lpda_pda AS pda WHERE pda.pda_staff_id='".$staff_code."'");
+										 $rows = mysql_num_rows($pdainfo);
+										 if($rows>0){
+										 $msg_pda=1;
+										 }
+										 }
+										?>
+										 
 										<?php if(!empty($msg)){ 	
-												echo "<span style='color:red;font-weight:bold;'>  Your data has been inserted succssfully into our system.</span>";
+												echo "<span style='color:green;font-weight:bold;margin-left:5px;>  Your data has been inserted succssfully into our system.</span>";
 												}  
 										?>
+											<?php if(!empty($msg_pda)){ 	
+												echo "<span style='color:red;font-weight:bold;margin-left:5px;'>  This staff already taken PDA. So, he can not take any more PDA.</span>";
+												}  
+										?>
+										
 										<table class="table">
 										 <input name="pda_org_code" type="hidden" value="<?php echo $org_code; ?>">
 										<tr>
@@ -323,12 +341,15 @@ $email=$_SESSION['username'];?></span>
 									
 										<tr>
 										<td colspan="2">
-										 <input name="pda_upazila_code" type="hidden" value="<?php echo $upazila_thana_code;  ?>">
-										  <input name="pda_updated_datetime" type="hidden" value="<?php echo date('Y-m-d h:m:i');  ?>">
+										   <input name="pda_upazila_code" type="hidden" value="<?php echo $upazila_thana_code;  ?>">
+										   <input name="pda_updated_datetime" type="hidden" value="<?php echo date('Y-m-d h:m:i');  ?>">
 										   <input name="pda_updated_by" type="hidden" value="<?php echo $org_name; ?>">
-										    <input name="pda_staff_id" type="hidden" value="<?php echo $staff_id; ?>">
+										   <input name="pda_staff_id" type="hidden" value="<?php echo $staff_id; ?>">
 										   <input name="pda_active" type="hidden" value="1">
-										<input type="submit" value="Submit" name="submit">
+										   
+										    <?php if(!empty($msg_pda)) {} else{ ?>
+										     <input type="submit" value="Submit" name="submit">
+										   <?php  } ?>
 										</td>
 										</tr>
 										</table>
@@ -397,7 +418,7 @@ WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_cod
 														  $total_manpower_id=$pdainfos['id'];
 														  
 														 if($total_manpower_id){ 
-														$pda_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+														$pda_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
 LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
 WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND total_manpower.id=' $total_manpower_id'");
 
@@ -407,7 +428,7 @@ WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_cod
 														} 
 														 if($staff_name){echo $staff_name;}else echo 'N/A';?></td>
                                                         <td><?php  if($contact_no){echo $contact_no;}else echo 'N/A';//echo $pdainfos['contact_no'];?></td>
-                                                    <td nowrap="nowrap"><a href="addpdainfo.php?id=<?php echo $pdainfos['id'];?>">Update</a></td>
+                                                    <td nowrap="nowrap"><a href="addpdainfo.php?staff_id=<?php echo $pda_staff_rows['staff_id'];?>">Update</a></td>
                                                 
 													</tr>
 
@@ -547,7 +568,7 @@ echo "<span><a id='page_a_link' href='addpdainfo.php?page=$j'>Next</a></span>";
                                                         <td><?php echo $lapinfos['pda_org_code'];?></td>
                                                         <td><?php echo $lapinfos['pda_union_name'];?></td>
 														<td><?php echo $lapinfos['pda_ward_no'];?></td>
-														<td><?php echo $lapinfos['pda_person_name'];?></td>
+														<td><a href="pdareport.php?pdaid=<?php echo $lapinfos['id'];?>"><?php echo $lapinfos['pda_person_name'];?></a></td>
 														<td><?php echo $lapinfos['pda_person_type'];?></td>
 														<td><?php echo $lapinfos['pda_person_mobile_no'];?></td>
 														<td><?php echo $lapinfos['pda_imei_no'];?></td>

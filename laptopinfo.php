@@ -1,9 +1,12 @@
-<?php session_start(); ?>
+<?php session_start(); 
+error_reporting(E_ALL);
+ini_set('display_errors','On');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <?php 
 require_once 'include/db_connection.php'; 
-include('include/inc.functions.generic.php');
+//include('include/inc.functions.generic.php');
 if(empty($_SESSION['loginid']))
 {
 	print "<script>";
@@ -14,16 +17,13 @@ if(empty($_SESSION['loginid']))
 
 $org_code = $_SESSION['org_code'] ;
 
-$org = mysql_query("SELECT lpda_organization.org_code,lpda_organization.org_name,lpda_organization.upazila_id
-FROM lpda_organization where lpda_organization.org_code='".$org_code."'");
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_id
+FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
 $upazila_id=$rows['upazila_id'];
 $org_name=$rows['org_name'];
 ?>
-
-<!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:48:05 GMT -->
-<head>
     <meta charset="utf-8">
     <title>Laptop/PDA Distribution System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,8 +93,9 @@ $org_name=$rows['org_name'];
                 <div class="header-wrapper">
 
                     <a href="#" class="utopia-logo"><img src="img/gov_logo.gif" alt="Utopia" height="50" width="80" /></a>
-                    <span style="font-size:24px;font-weight:bold;">Laptop/PDA Distribution System - <?php 
-echo $org_name;					?></span>
+                    <span style="font-size:24px;font-weight:bold;">Laptop/PDA Distribution System
+					 - <?php echo $org_name;?>
+					</span>
                     <div class="header-right">
 
                         <div class="header-divider">&nbsp;</div>
@@ -155,11 +156,10 @@ echo $org_name;					?></span>
 
                     </div>
                 </div>
-
-                  <div class="nav-collapse collapse leftmenu">
+				
+				<div class="nav-collapse collapse leftmenu">
 					<?php include('left_menu.php');?>
 				</div>
-
 
             </div>
         </div>
@@ -182,160 +182,72 @@ echo $org_name;					?></span>
                                 <div class="row-fluid">
 
                                     <div class="span12">
-         <section class="utopia-widget">
-                                         <div class="utopia-widget-title">
-                                                <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
-                                                <span>Name of CHCP & Laptop Information &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="requisition.php">Requisition Form</a></span>
-                                            </div>
-                                   
-<table class="table table-bordered">
-
-                                                    <thead>
-													<tr>
-													<th colspan="11">
-													List of CHCP with received Laptop
-													</th>
-													</tr>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th nowrap="nowrap">Org code</th>
-														<th nowrap="nowrap">Name of CC</th>
-														<th nowrap="nowrap">Union</th>
-                                                        <th nowrap="nowrap">New Ward no</th>
-														<th nowrap="nowrap">CHCP Name</th>
-														<th nowrap="nowrap">CHCP Mobile No.</th>
-														<th>IMEI No.</th>
-														<th nowrap="nowrap">SIM No.</th>
-														<th nowrap="nowrap">Laptop Sl No.</th>
-														<th>Action</th>
-                                                    </tr>
-                                                    </thead>
-
-                                                    <tbody>
-													<?php
-
-														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
-													//$i=1;
-												    while($lapinfos = mysql_fetch_array($lapinfo))
-														{ 
-														if(!empty($lapinfos['laptop_imei_no'])&&!empty($lapinfos['laptop_sim_no'])&&!empty($lapinfos['laptop_serial_no'])){
-														?>
-                                                    <tr>
-                                                        <td><?php echo $lapinfos['id'];?></td>
-                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
-                                                        <td><?php echo $lapinfos['laptop_cc_name'];?></td>
-                                                        <td><?php echo $lapinfos['union_name'];?></td>
-														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
-														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
-														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>
-														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
-														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
-														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
-														<td nowrap="nowrap"><a href=""> Details</a></td>
-                                                    </tr>
-													<?php }} ?>
-                                                   
-                                                    </tbody>
-</table>
-
-<table class="table table-bordered">
-
-                                                    <thead>
-													<tr>
-													<th colspan="11">
-													List of CHCP without Laptop
-													</th>
-													</tr>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th nowrap="nowrap">Org code</th>
-														<th nowrap="nowrap">Name of CC</th>
-														<th nowrap="nowrap">Union</th>
-                                                        <th nowrap="nowrap">New Ward no</th>
-														<th nowrap="nowrap">CHCP Name</th>
-														<th nowrap="nowrap">CHCP Mobile No.</th>
-														<th>IMEI No.</th>
-														<th nowrap="nowrap">SIM No.</th>
-														<th nowrap="nowrap">Laptop Sl No.</th>
-														<th>Action</th>
-                                                    </tr>
-                                                    </thead>
-
-                                                    <tbody>
-													<?php
-
-														$lapinfo=mysql_query("SELECT lpda.id,lpda.laptop_org_code,lpda.laptop_cc_name,u.union_name,lpda.laptop_ward_no,lpda.laptop_chcp_name,lpda.laptop_chcp_mobile_no,lpda.laptop_imei_no,lpda.laptop_sim_no,laptop_serial_no FROM lpda_laptop AS lpda INNER JOIN lpda_union AS u ON u.union_bbs_code = lpda.laptop_union_name WHERE lpda.laptop_upazila_id=u.old_upazila_id AND lpda.laptop_updated_org_code='".$org_code."' GROUP BY lpda.laptop_cc_name");
-													//$i=1;
-												    while($lapinfos = mysql_fetch_array($lapinfo))
-														{ 
-														if(empty($lapinfos['laptop_imei_no'])|| empty($lapinfos['laptop_sim_no'])||empty($lapinfos['laptop_serial_no'])){
-														?>
-                                                    <tr>
-                                                        <td><?php echo $lapinfos['id'];?></td>
-                                                        <td><?php echo $lapinfos['laptop_org_code'];?></td>
-                                                        <td><?php echo $lapinfos['laptop_cc_name'];?></td>
-                                                        <td><?php echo $lapinfos['union_name'];?></td>
-														<td><?php echo $lapinfos['laptop_ward_no'];?></td>
-														<td><?php echo $lapinfos['laptop_chcp_name'];?></td>
-														<td><?php echo $lapinfos['laptop_chcp_mobile_no'];?></td>
-														<td><?php echo $lapinfos['laptop_imei_no'];?></td>
-														<td><?php echo $lapinfos['laptop_sim_no'];?></td>
-														<td><?php echo $lapinfos['laptop_serial_no'];?></td>
-														<td nowrap="nowrap"><a href="">Edit</a></td>
-                                                    </tr>
-													<?php }} ?>
-                                                   
-                                                    </tbody>
-</table>
-</div>
-                               </div>
-
-                                </div>
-
-								
-								<!--
-                                <div class="row-fluid">
-                                    <div class="span12">
 
                                         <section class="utopia-widget">
                                             <div class="utopia-widget-title">
-                                                <img src="img/icons/satellite.png" class="utopia-widget-icon">
-                                                <span>maps with route directions</span>
+                                                <img src="img/icons/paragraph_justify.png" class="utopia-widget-icon">
+                                                <span>CC Informtion who received laptop &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="laptopprint.php">Print</a></span>
                                             </div>
 
                                             <div class="utopia-widget-content">
-                                                <div class="utopia-map-wrapper">
-                                                    <div id="utopia-google-map-5" class="utopia-map"></div>
-                                                    <div class="utopia-map-details">
-                                                        <div class="utopia-map-description">
-                                                            <p>
-                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et tempus elit.
-                                                                Duis pharetra blandit risus, a condimentum ipsum ultricies nec. Integer accumsan
-                                                                neque nec augue dictum sit amet dignissim tortor scelerisque.
-                                                            </p>
-                                                        </div>
-                                                        <div class="utopia-map-action">
-                                                            <img src="img/icons2/sun.png"/>
-                                                            <img src="img/icons2/world.png"/>
-                                                            <img src="img/icons2/cloud.png"/>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </section>
 
-                                    </div>
-                                </div>
-                              -->
+                                                <table class="table table-bordered">
 
-                                <!-- image gallery  Starts-->
+                                                    <colgroup>
+                                                        <col class="utopia-col-0">
+                                                        <col class="utopia-col-1">
+                                                        <col class="utopia-col-0">
+                                                        <col class="utopia-col-1">
+                                                        <col class="utopia-col-0">
+                                                    </colgroup>
 
-                               
-                                <!-- image gallery  ends-->
+                                                    <thead>
+													<tr>
+													<th colspan="11">
+													List of CC who received Laptop
+													</th>
+													</tr>
+                                                    <tr>
+                                                        <th>Sl</th>
+                                                        <th>CC Name</th>
+                                                        <th>Union Name</th>
+														<th>Ward No</th>
+														<th>CHCP Name</th>
+														<th>CHCP Mobile No.</th>
+														<th>Source of Electricity</th>
+														<th>IMEI No.</th>
+														<th>SIM No.</th>
+														<th>Serial No.</th>
+                                                    </tr>
+                                                    </thead>
+												
+                                                    <tbody>
+													<?php
+													
+													$pdainfo=mysql_query("SELECT * FROM lpda_laptop WHERE laptop_updated_org_code=$org_code");
+													$i=1;
+												    while($pdainfos = mysql_fetch_array($pdainfo))
+														{  
+														//if(!empty($pdainfos['pda_imei_no'])&&!empty($pdainfos['pda_sim_no'])){
+												        ?>
+                                                     <tr>
+                                                        <td><?php echo $pdainfos['id'];?></td>
+                                                        <td><?php echo $pdainfos['laptop_cc_name'];?></td>
+                                                        <td><?php echo $pdainfos['laptop_union_name'];?></td>
+														<td><?php echo $pdainfos['laptop_ward_no'];?></td>
+														<td><?php echo $pdainfos['laptop_chcp_name'];?></td>
+														<td><?php echo $pdainfos['laptop_chcp_mobile_no'];?></td>
+														<td><?php echo $pdainfos['laptop_electricity_source_value'];?></td>
+														<td><?php echo $pdainfos['laptop_imei_no'];?></td>
+														<td><?php echo $pdainfos['laptop_sim_no'];?></td>
+														<td><?php echo $pdainfos['laptop_serial_no'];?></td>
+                                                    </tr>
 
-
-                            </div><!-- Mid panel -->
+                                                   <?php //}
+												   } ?>
+                                                    </tbody>
+                                                </table>
+												
 <!--
                             <div class="span3">
 
@@ -600,6 +512,7 @@ echo $org_name;					?></span>
     
 </script>
 </body>
+
 
 <!-- Mirrored from utopiaadmin.themio.net/dashboard.html by HTTrack Website Copier/3.x [XR&CO'2013], Tue, 27 Aug 2013 05:50:08 GMT -->
 </html>
