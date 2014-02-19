@@ -61,8 +61,15 @@ if(isset($_POST['submit']))
 {
 	$signin = mysql_query("SELECT * FROM user WHERE username='$uname' AND password='$pass'");
 	$row = mysql_fetch_assoc($signin);
+	$org_code=$row['org_code'];
+	
+	$org_type = mysql_query("SELECT org_type_code FROM organization WHERE org_code='$org_code'");
+	$org_types_row = mysql_fetch_assoc($org_type);
+	$org_type_code=$org_types_row['org_type_code'];
+	
 	$rowsign = mysql_num_rows($signin);
-	if($rowsign > 0)
+	
+	if($rowsign>0 && $org_type_code=='1029' || $rowsign>0 && $org_type_code=='1051')
 	{
 	$msg = '<font color="#009900"><b>Login Successful. Redirecting, please wait.</b></font>';
 	$_SESSION['loginid'] = $row['user_type'];
@@ -70,6 +77,7 @@ if(isset($_POST['submit']))
 	$_SESSION['org_code'] = $row['org_code'];
     $_SESSION['username'] = $row['username'];
 	
+
 		/*$ip = $_SERVER['REMOTE_ADDR'];
 		$login = time();*/
 		if(!empty($_SESSION['loginid']) && $_SESSION['loginid']=='user')

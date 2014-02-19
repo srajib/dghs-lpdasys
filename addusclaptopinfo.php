@@ -43,11 +43,12 @@ if(empty($_SESSION['loginid']))
 
 
 $org_code = $_SESSION['org_code'] ;
-$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_thana_code
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_thana_code,district_code
 FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
 $upazila_thana_code=$rows['upazila_thana_code'];
+$district_code=$rows['district_code'];
 $org_name=$rows['org_name'];
 
 
@@ -461,7 +462,7 @@ FROM org_source_of_electricity_main where org_source_of_electricity_main.electri
 															$calc = $perpage * $page;
 															$start = $calc - $perpage;
 
-												    $lapinfo=mysql_query("SELECT * FROM organization where org_type_code='1038' AND upazila_thana_code='$upazila_thana_code' Limit $start, $perpage");
+												    $lapinfo=mysql_query("SELECT * FROM organization where upazila_thana_code='$upazila_thana_code' AND district_code='$district_code' AND org_type_name LIKE 'Union Sub-center%' Limit $start, $perpage");
 													
 													$rows = mysql_num_rows($lapinfo);
 													$j=1;
@@ -509,7 +510,7 @@ if(isset($page))
 {
 //$lapinfo=mysql_query("SELECT * FROM organization where org_type_code='1039' AND upazila_id='$upazila_id'");
 													
-$result = mysql_query("SELECT COUNT(*) AS Total FROM organization where org_type_code='1038' AND upazila_thana_code='$upazila_thana_code'");
+$result = mysql_query("SELECT COUNT(*) AS Total FROM organization where upazila_thana_code='$upazila_thana_code' AND district_code='$district_code' AND org_type_name LIKE 'Union Sub-center%'");
  
 $rows = mysql_num_rows($result);
  

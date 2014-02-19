@@ -6,10 +6,10 @@
  */
 
 //local connection
-$dbhost='103.247.238.164';	
-$dbname='dghs_hrm_main';	
+$dbhost='localhost';	
+$dbname='dghs_hrm_main_live2';	
 $dbuser='root';
-$dbpass='M1$DB@2012';
+$dbpass='';
 
 mysql_select_db($dbname,mysql_connect($dbhost, $dbuser, $dbpass))or die(mysql_errno());
 

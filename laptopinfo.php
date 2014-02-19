@@ -17,11 +17,12 @@ if(empty($_SESSION['loginid']))
 
 $org_code = $_SESSION['org_code'] ;
 
-$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_id
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_thana_code,organization.district_code
 FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
-$upazila_id=$rows['upazila_id'];
+$upazila_code=$rows['upazila_thana_code'];
+$district_code=$rows['district_code'];
 $org_name=$rows['org_name'];
 ?>
     <meta charset="utf-8">
@@ -204,47 +205,61 @@ $org_name=$rows['org_name'];
                                                     <thead>
 													<tr>
 													<th colspan="11">
-													List of CC who received Laptop
+													List of CC who filled up CHCP data into HRM
 													</th>
 													</tr>
                                                     <tr>
                                                         <th>Sl</th>
                                                         <th>CC Name</th>
-                                                        <th>Union Name</th>
-														<th>Ward No</th>
 														<th>CHCP Name</th>
 														<th>CHCP Mobile No.</th>
 														<th>Source of Electricity</th>
-														<th>IMEI No.</th>
-														<th>SIM No.</th>
-														<th>Serial No.</th>
                                                     </tr>
                                                     </thead>
 												
                                                     <tbody>
 													<?php
 													
-													$pdainfo=mysql_query("SELECT * FROM lpda_laptop WHERE laptop_updated_org_code=$org_code");
+												    $lapinfo=mysql_query("SELECT * FROM organization where org_type_code='1039' AND upazila_thana_code='$upazila_code' AND district_code='$district_code'");
+													
 													$i=1;
-												    while($pdainfos = mysql_fetch_array($pdainfo))
+												    while($lapinfos= mysql_fetch_array($lapinfo))
 														{  
-														//if(!empty($pdainfos['pda_imei_no'])&&!empty($pdainfos['pda_sim_no'])){
 												        ?>
                                                      <tr>
-                                                        <td><?php echo $pdainfos['id'];?></td>
-                                                        <td><?php echo $pdainfos['laptop_cc_name'];?></td>
-                                                        <td><?php echo $pdainfos['laptop_union_name'];?></td>
-														<td><?php echo $pdainfos['laptop_ward_no'];?></td>
-														<td><?php echo $pdainfos['laptop_chcp_name'];?></td>
-														<td><?php echo $pdainfos['laptop_chcp_mobile_no'];?></td>
-														<td><?php echo $pdainfos['laptop_electricity_source_value'];?></td>
-														<td><?php echo $pdainfos['laptop_imei_no'];?></td>
-														<td><?php echo $pdainfos['laptop_sim_no'];?></td>
-														<td><?php echo $pdainfos['laptop_serial_no'];?></td>
-                                                    </tr>
+														<?php 
+                                                        $cc_org_code=$lapinfos['org_code'];
+                                                        $cc_electrictiy_source=$lapinfos['source_of_electricity_main_code'];
+                                                       
+                                                        if ( $cc_electrictiy_source) {
+                                                            $elect_source = mysql_query("SELECT org_source_of_electricity_main.electricity_source_code,org_source_of_electricity_main.electricity_source_name
+                                                            FROM org_source_of_electricity_main where org_source_of_electricity_main.electricity_source_code='" . $cc_electrictiy_source . "'");
+                                                            $source_of_electricityrows = mysql_fetch_assoc($elect_source);
+                                                            $electricity_source = $source_of_electricityrows['electricity_source_name'];
+                                                            } else {
+                                                              $electricity_source = 'N/A';
+                                                            }
+                                                             
+														if($cc_org_code){ 
+														$cc_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
+														LEFT JOIN total_manpower_imported_sanctioned_post_copy as total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
+														where old_tbl_staff_organization.org_code='$cc_org_code' AND total_manpower.designation_code='11960'");
 
-                                                   <?php //}
-												   } ?>
+														$cc_staff_rows = mysql_fetch_assoc($cc_staff);
+														$staff_name=$cc_staff_rows['staff_name'];
+														$contact_no =$cc_staff_rows['contact_no'];
+														}
+                                                        
+                                                        if($staff_name){
+														?>
+                                                        <td><?php echo $i++;?></td>
+                                                        <td><a href="addlaptopinfo.php?org_code=<?php echo $lapinfos['org_code'];?>"><?php echo $lapinfos['org_name'];?></a></td>
+														<td><?php if($staff_name){echo $staff_name;}else echo 'N/A';?></td>
+														<td><?php  if($contact_no){echo $contact_no;}else echo 'N/A';?></td>
+                                                        <td> <?php if($electricity_source){ echo $electricity_source; } else { echo 'N/A';}?></td>
+                                                        <?php } ?>
+                                                    </tr>
+                                                   <?php } ?>
                                                     </tbody>
                                                 </table>
 												
@@ -279,134 +294,7 @@ $org_name=$rows['org_name'];
 
 
                 <div class="row-fluid">
-<!--
-                    <div class="span6">
 
-                        <section class="utopia-widget">
-                            <div class="utopia-widget-title">
-                                <img src="img/icons/font_size.png" class="utopia-widget-icon">
-                                <span>contact form</span>
-                            </div>
-
-                            <div class="utopia-widget-content utopia-chosen-form">
-                                <form id="validation" action="javascript:void(0)" class="utopia-form-freeSpace form-horizontal">
-                                    <fieldset>
-                                        <div class="control-group">
-                                            <label class="control-label" for="input01">Title*:</label>
-
-                                            <div class="controls">
-                                                <input id="input01" class="input-fluid validate[required]" type="text" value="">
-                                            </div>
-                                        </div>
-                                        <div class="control-group">
-                                            <label class="control-label" for="inputError"> Contact email*:</label>
-
-                                            <div class="controls">
-                                                <input id="inputError" class="input-fluid validate[required,custom[email]]" type="text" value="jon.com"><br>
-                                            </div>
-                                        </div>
-                                        <div class="control-group">
-                                            <label class="control-label" for="phone">Contact phone*:</label>
-
-                                            <div class="controls">
-                                                <input id="phone" class="input-fluid  validate[required, custom[phone]]" type="text" value=""><br/>
-                                                <span class="help-inline">Must be (xxx) xxxxxxxxxx</span>
-                                            </div>
-                                        </div>
-                                        <div class="control-group">
-                                            <label class="control-label" for="select02">Category:</label>
-
-                                            <div class="controls sample-form-chosen">
-                                                <select id="select02" data-placeholder="Select your category" style="width:82.5%;" class="chzn-select-deselect" tabindex="7">
-                                                    <option value=""></option>
-                                                    <option value="Zimbabwe">Mac</option>
-                                                    <option value="Zimbabwe">Linux</option>
-                                                    <option value="Zimbabwe">Debian</option>
-                                                    <option value="Zimbabwe">Ubuntu</option>
-                                                    <option value="Zimbabwe">Gnome 3</option>
-                                                    <option value="Zimbabwe">Windows</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="control-group">
-                                            <label class="control-label" for="input" >Message:</label>
-
-                                            <div class="controls utopia-dashbord-cleditor">
-                                                <textarea id="input" class="input-fluid" name="input"></textarea>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </form>
-                            </div>
-                        </section>
-
-                    </div>-->
-
-<!--
-                    <div class="span6">
-                        <section class="utopia-widget">
-                            <div class="utopia-widget-title">
-                                <img src="img/icons/pyramid.png" class="utopia-widget-icon">
-                                <span>activity</span>
-                            </div>
-
-                            <div class="utopia-widget-content">
-
-                                <div class="utopia-activity-feeds">
-                                    <ul>
-                                        <li>
-                                            <div class="text">
-                                                <p><span class="label label-success">smronju</span> Posted on tumblr blog.</p>
-                                            </div>
-
-                                            <div class="info">
-                                                <span>Type:</span> <a class="tooltipA" href="#" data-original-title="visit smronju's blog" rel="tooltip">blog</a>
-                                                <span>Status:</span> <a class="tooltipA" href="#" data-original-title="anyone can view" rel="tooltip">open</a>
-                                                <span class="date">May, 25 2012 2:00pm</span>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="text">
-                                                <p><span class="label">hasinhayder</span> Commented on smronju's blog post.</p>
-                                            </div>
-
-                                            <div class="info">
-                                                <span>Type:</span> <a class="tooltipA" href="#" data-original-title="visit smronju's blog" rel="tooltip">blog</a>
-                                                <span>Status:</span> <a class="tooltipA" href="#" data-original-title="anyone can view" rel="tooltip">open</a>
-                                                <span class="date">May, 25 2012 2:00pm</span>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="text">
-                                                <p><span class="label label-info">smronju</span> Updated his blog post.</p>
-                                            </div>
-
-                                            <div class="info">
-                                                <span>Type:</span> <a class="tooltipA" href="#" data-original-title="visit smronju's blog" rel="tooltip">blog</a>
-                                                <span>Status:</span> <a class="tooltipA" href="#" data-original-title="anyone can view" rel="tooltip">open</a>
-                                                <span class="date">May, 25 2012 2:00pm</span>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="text">
-                                                <p><span class="label">hasinhayder</span> Replied on smronju's blog post comment.</p>
-                                            </div>
-
-                                            <div class="info">
-                                                <span>Type:</span> <a class="tooltipA" href="#" data-original-title="visit smronju's blog" rel="tooltip">blog</a>
-                                                <span>Status:</span> <a class="tooltipA" href="#" data-original-title="anyone can view" rel="tooltip">open</a>
-                                                <span class="date">May, 25 2012 2:00pm</span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>-->
             </div>
         <!-- Body end -->
 

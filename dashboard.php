@@ -188,6 +188,12 @@ $email=$_SESSION['username'];?></span>
                                             <div class="utopia-widget-title">
                                         <h2> &nbsp;Welcome to Laptop/PDA Distributon System</h2>
 										</div>
+										
+										  <div class="utopia-widget-content">
+										   <h2 style="font-size:24px;"> &nbsp;</h2>
+                                        <h3 style="font-size:30px;text-align:center;color:red;"> <blink>&nbsp;You Can Update HRM Data</blink></h3>
+										 <h1 style="font-size:20px;text-align:center;"> &nbsp;<a href="http://app.dghs.gov.bd/hrm/login.php">Click Here</a></h1>
+										</div>
 										</section>
 										<!--
                                         <section class="utopia-widget">

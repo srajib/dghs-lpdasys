@@ -37,11 +37,12 @@ if(empty($_SESSION['loginid']))
 
 
 $org_code = $_SESSION['org_code'] ;
-$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_thana_code
+$org = mysql_query("SELECT organization.org_code,organization.org_name,organization.upazila_thana_code,organization.district_code
 FROM organization where organization.org_code='".$org_code."'");
 	
 $rows = mysql_fetch_assoc($org);
 $upazila_thana_code=$rows['upazila_thana_code'];
+$district_code=$rows['district_code'];
 $org_name=$rows['org_name'];
 ?>
 <head>
@@ -420,7 +421,7 @@ WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_cod
 														 if($total_manpower_id){ 
 														$pda_staff = mysql_query("SELECT old_tbl_staff_organization.staff_name,old_tbl_staff_organization.staff_id,total_manpower.designation,old_tbl_staff_organization.contact_no FROM old_tbl_staff_organization
 LEFT JOIN total_manpower_imported_sanctioned_post_copy AS total_manpower ON total_manpower.id=old_tbl_staff_organization.sanctioned_post_id 
-WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND total_manpower.id=' $total_manpower_id'");
+WHERE (total_manpower.designation_code='10959' OR total_manpower.designation_code='10274' OR total_manpower.designation_code='10951') AND total_manpower.id='$total_manpower_id'");
 
 														$pda_staff_rows = mysql_fetch_assoc($pda_staff);
 														$staff_name=$pda_staff_rows['staff_name'];

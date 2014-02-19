@@ -7,7 +7,7 @@ mysql_query("UPDATE admin_rec SET logout_time='$logout' WHERE login_time='$login
 */
 session_destroy(); //Destroy it! So we are logged out now
 ?><head>
-<meta http-equiv="refresh" content="2; url=<?php echo $url="http://".$_SERVER['HTTP_HOST']."/lpdasystem/"; ?>">
+<meta http-equiv="refresh" content="2; url=<?php echo $url="http://".$_SERVER['HTTP_HOST']."/lpda_3_2_14/"; ?>">
 
 <title>Admin Login - Logout</title>
 </head>
